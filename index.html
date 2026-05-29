@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="soummo;">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<title>soummo; money</title>
+<style>
+:root {
+  --ink: #000000;
+  --forest: #283D3B;
+  --cream: #EDDDD4;
+  --cream-light: #F5EBE3;
+  --terracotta: #C44536;
+  --teal: #197278;
+  --burgundy: #772E25;
+  --border: rgba(40, 61, 59, 0.12);
+  --border-strong: rgba(40, 61, 59, 0.25);
+  --bg: #FAF5F0;
+  --text: #283D3B;
+  --text-muted: rgba(40, 61, 59, 0.65);
+  --serif: 'Cambria', Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; font-family: var(--sans); background: var(--bg); color: var(--text); overscroll-behavior: none; }
+body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); min-height: 100vh; }
+
+.app { max-width: 480px; margin: 0 auto; padding: 12px; padding-bottom: 30px; }
+
+.hdr { background: var(--ink); color: var(--cream); padding: 14px 16px; border-radius: 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-style: italic; font-size: 22px; }
+.tag { font-size: 9px; letter-spacing: 0.18em; color: var(--terracotta); font-weight: 600; margin-top: 2px; }
+.cycle-info { text-align: right; }
+.cycle-lbl { font-size: 9px; opacity: 0.7; letter-spacing: 0.1em; }
+.cycle-val { font-size: 13px; font-family: var(--serif); font-style: italic; }
+
+.card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+.terra { background: var(--terracotta); color: var(--cream); padding: 16px; border-radius: 14px; margin-bottom: 12px; }
+.forest { background: var(--forest); color: var(--cream); padding: 16px; border-radius: 14px; margin-bottom: 10px; }
+.eyebrow { font-size: 10px; letter-spacing: 0.2em; font-weight: 600; text-transform: uppercase; opacity: 0.8; margin-bottom: 4px; }
+.big { font-family: var(--serif); font-style: italic; font-size: 30px; line-height: 1; }
+.small { font-size: 11px; opacity: 0.85; font-style: italic; margin-top: 3px; }
+.row { display: flex; justify-content: space-between; align-items: center; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; background: rgba(40,61,59,0.06); padding: 4px; border-radius: 12px; }
+.tab { flex: 1; padding: 10px 4px; font-size: 12px; font-weight: 600; text-align: center; border-radius: 8px; cursor: pointer; color: var(--text-muted); border: none; background: transparent; font-family: inherit; white-space: nowrap; transition: all 0.15s; }
+.tab.active { background: white; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.stat { background: white; padding: 10px 6px; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+.stat-num { font-family: var(--serif); font-style: italic; font-size: 18px; line-height: 1.2; }
+.stat-lbl { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; }
+
+.helper { background: rgba(25,114,120,0.1); border-radius: 10px; padding: 10px 12px; font-size: 13px; color: var(--text); margin-bottom: 12px; line-height: 1.45; }
+.helper strong { color: var(--terracotta); }
+.helper.warn { background: rgba(196,69,54,0.1); }
+
+.legend { background: rgba(40,61,59,0.04); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; font-size: 11px; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.legend-row { display: flex; align-items: center; gap: 5px; }
+.legend-icon { width: 18px; height: 18px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.legend-icon.due { background: white; border: 1px solid var(--border-strong); color: var(--text-muted); }
+.legend-icon.partial { background: var(--terracotta); color: white; }
+.legend-icon.paid { background: var(--teal); color: white; }
+
+.item { display: flex; gap: 8px; align-items: center; padding: 12px 10px; border-bottom: 1px solid var(--border); }
+.item:last-child { border-bottom: none; }
+.item.done { opacity: 0.55; }
+.item.done .name { text-decoration: line-through; }
+.item.partial { background: rgba(196, 69, 54, 0.04); }
+
+.content { flex: 1; min-width: 0; cursor: pointer; }
+.name-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.name { font-size: 14px; font-weight: 600; }
+.meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.paid-info { font-size: 10px; color: var(--teal); margin-top: 2px; font-weight: 600; }
+.amt-block { text-align: right; margin-right: 4px; white-space: nowrap; }
+.amt { font-size: 14px; font-weight: 600; }
+.amt-paid { font-size: 10px; color: var(--teal); }
+.amt-due { font-size: 10px; color: var(--terracotta); }
+
+.status-btns { display: flex; gap: 3px; flex-shrink: 0; }
+.s-btn { width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid var(--border-strong); background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; font-size: 13px; font-weight: 700; color: var(--text-muted); transition: all 0.15s; }
+.s-btn.active.due-state { background: white; border-color: var(--forest); color: var(--forest); }
+.s-btn.active.partial-state { background: var(--terracotta); border-color: var(--terracotta); color: white; }
+.s-btn.active.paid-state { background: var(--teal); border-color: var(--teal); color: white; }
+.s-btn:active { transform: scale(0.92); }
+
+.pill { display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 999px; font-weight: 600; margin-left: 4px; }
+.pill-rel { background: rgba(25,114,120,0.15); color: var(--teal); }
+.pill-loan { background: rgba(196,69,54,0.15); color: var(--terracotta); }
+.pill-inv { background: rgba(40,61,59,0.15); color: var(--forest); }
+.pill-extra { background: rgba(119,46,37,0.2); color: var(--burgundy); }
+
+.actions { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.btn { padding: 10px 12px; font-size: 12px; font-weight: 600; border: 1px solid var(--border-strong); border-radius: 10px; background: white; cursor: pointer; color: var(--text); font-family: inherit; flex: 1; min-width: 0; transition: all 0.15s; }
+.btn.primary { background: var(--terracotta); color: var(--cream); border-color: var(--terracotta); }
+.btn.dark { background: var(--forest); color: var(--cream); border-color: var(--forest); }
+.btn:active { transform: scale(0.96); }
+
+.fab { width: 100%; padding: 12px; border: 1.5px dashed var(--border-strong); border-radius: 10px; background: transparent; color: var(--text-muted); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin: 10px 0; }
+
+.modal-bd { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: flex-end; justify-content: center; z-index: 100; padding: 0; animation: fadeIn 0.2s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal { background: white; border-radius: 20px 20px 0 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom)); width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s ease-out; }
+.modal-t { font-family: var(--serif); font-style: italic; font-size: 22px; margin-bottom: 4px; }
+.modal-s { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+
+.split-row { display: flex; gap: 8px; align-items: center; padding: 12px; background: rgba(40,61,59,0.04); border-radius: 10px; margin-bottom: 14px; }
+.split-amt { font-family: var(--serif); font-style: italic; font-size: 20px; flex: 1; }
+.split-lbl { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+.split-divider { width: 1px; background: var(--border-strong); align-self: stretch; }
+
+.ig { margin-bottom: 12px; }
+.ig-l { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.ip { width: 100%; padding: 12px; border: 1.5px solid var(--border-strong); border-radius: 10px; font-size: 16px; font-family: inherit; background: white; color: var(--text); }
+.ip:focus { outline: none; border-color: var(--terracotta); }
+
+.bar { height: 6px; background: rgba(40,61,59,0.08); border-radius: 999px; overflow: hidden; margin: 6px 0 2px; }
+.bar-fill { height: 100%; transition: width 0.4s; border-radius: 999px; background: var(--terracotta); }
+
+.qc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.qc-btn { padding: 14px 8px; border: 1px solid var(--border); border-radius: 12px; background: white; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.qc-btn:active { background: rgba(196,69,54,0.05); transform: scale(0.97); }
+
+.alert { background: var(--forest); color: var(--cream); padding: 12px 14px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+.alert.big-banner { background: var(--terracotta); padding: 18px 16px; }
+.alert.big-banner .alert-t { font-size: 16px; font-family: var(--serif); font-style: italic; }
+.alert.big-banner .alert-s { font-size: 12px; }
+.alert-icon { font-size: 22px; flex-shrink: 0; }
+.alert-c { flex: 1; }
+.alert-t { font-size: 13px; font-weight: 600; }
+.alert-s { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+.alert-btn { padding: 7px 11px; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+.goal-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 8px; cursor: pointer; }
+.goal-r { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.goal-n { font-size: 14px; font-weight: 600; }
+.goal-m { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.goal-v { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--terracotta); }
+
+.hist-c { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+.hist-c:active { background: rgba(196,69,54,0.04); }
+
+.empty { padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+.footer { background: var(--ink); color: var(--cream); text-align: center; padding: 12px; border-radius: 10px; font-size: 10px; letter-spacing: 0.1em; margin-top: 12px; }
+
+.day-log { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.day-log:last-child { border: none; }
+.day-log-l { flex: 1; min-width: 0; }
+.day-log-n { font-size: 14px; font-weight: 600; }
+.day-log-c { font-size: 11px; color: var(--teal); margin-top: 2px; }
+.day-log-a { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--terracotta); }
+.day-hdr { padding: 8px 14px; background: rgba(40,61,59,0.04); font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; justify-content: space-between; }
+
+.section-h { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; color: var(--text-muted); margin: 16px 0 8px 0; padding: 0 4px; }
+
+.hist-detail-row { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.hist-detail-row:last-child { border: none; }
+.hist-detail-row strong { font-family: var(--serif); font-style: italic; color: var(--terracotta); font-size: 15px; }
+
+.backup-row { display: flex; gap: 6px; margin-top: 8px; }
+.backup-btn { flex: 1; padding: 10px 8px; border: 1px solid var(--border-strong); border-radius: 8px; background: white; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--text); font-family: inherit; }
+.backup-btn:active { background: rgba(40,61,59,0.04); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="hdr">
+    <div>
+      <div class="logo">soummo;</div>
+      <div class="tag">YOUR STORY · TRACKED</div>
+    </div>
+    <div class="cycle-info">
+      <div class="cycle-lbl">CYCLE</div>
+      <div class="cycle-val" id="cycle-label">may 29 → jun 28</div>
+    </div>
+  </div>
+
+  <div id="alerts-zone"></div>
+
+  <div class="tabs" role="tablist" id="top-tabs">
+    <button class="tab active" data-screen="home">🏠 home</button>
+    <button class="tab" data-screen="daily">💸 daily</button>
+    <button class="tab" data-screen="goals">🎯 goals</button>
+    <button class="tab" data-screen="history">📊 history</button>
+    <button class="tab" data-screen="settings">⚙️ more</button>
+  </div>
+
+  <div id="screen-root"></div>
+
+  <div class="footer">SOUMMO · MONEY · V.04 · MMXXVI</div>
+
+  <div id="modal-root"></div>
+  <input type="file" id="restore-file-input" accept=".json" style="display:none" />
+</div>
+
+<script>
+const STORAGE_KEY = 'soummo_money_v4';
+const APP_TODAY = new Date();
+const SALARY_DAY_NUMBER = 28; // Day of month
+
+function getNextSalaryDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  let target = new Date(year, month, SALARY_DAY_NUMBER);
+  if (today > target) {
+    target = new Date(year, month + 1, SALARY_DAY_NUMBER);
+  }
+  return target;
+}
+
+function getBracEmiDay() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  let target = new Date(year, month, 25);
+  if (today.getDate() > 25) {
+    target = new Date(year, month + 1, 25);
+  }
+  return target;
+}
+
+function defaultItems() {
+  return [
+    { id: 'rent', name: 'House Rent', amount: 24400, cat: 'Critical', status: 'paid', paid: 24400, note: 'june advance' },
+    { id: 'garage', name: 'Garage', amount: 2200, cat: 'Critical', status: 'paid', paid: 2200 },
+    { id: 'electric', name: 'Electricity', amount: 4000, cat: 'Critical', status: 'paid', paid: 4000, note: 'prepaid' },
+    { id: 'gas', name: 'Gas', amount: 2290, cat: 'Critical', status: 'paid', paid: 2290 },
+    { id: 'help', name: 'House Help', amount: 7000, cat: 'Important', status: 'paid', paid: 7000 },
+    { id: 'babies', name: 'Babies', amount: 2200, cat: 'Critical', status: 'partial', paid: 1100, note: 'half done' },
+    { id: 'grocery', name: 'Grocery', amount: 15000, cat: 'Critical', status: 'paid', paid: 15000 },
+    { id: 'education', name: 'Education', amount: 15000, cat: 'Critical', status: 'paid', paid: 15000 },
+    { id: 'dps', name: 'DPS · existing', amount: 10000, cat: 'Investment', status: 'paid', paid: 10000 },
+    { id: 'wifi', name: 'WiFi', amount: 1000, cat: 'Important', status: 'paid', paid: 1000, note: 'till july' },
+    { id: 'misc', name: 'Miscellaneous', amount: 8000, cat: 'Discretionary', status: 'due', paid: 0, note: 'ongoing' },
+    { id: 'uncle', name: 'Uncle · family', amount: 22000, cat: 'Family', status: 'paid', paid: 22000 },
+    { id: 'fuel', name: 'Fuel · oil', amount: 8000, cat: 'Important', status: 'due', paid: 0 },
+    { id: 'itracker', name: 'ITracker', amount: 350, cat: 'Optional', status: 'paid', paid: 350 },
+    { id: 'brac-emi', name: 'BRAC EMI', amount: 29000, cat: 'Loan', status: 'due', paid: 0, note: 'due jun 25' }
+  ];
+}
+
+function defaultState() {
+  return {
+    cashOnHand: 270000,
+    salaryAmount: 234000,
+    items: defaultItems(),
+    activeScreen: 'home',
+    activeTab: 'due',
+    dailyExpenses: [],
+    history: [],
+    goals: {
+      ebl: { name: 'EBL Loan Closure', target: 255000, current: 0, due: '2026-06-29' },
+      brac: { name: 'BRAC Loan Payoff', target: 1276000, current: 0, due: '2028-03-01' },
+      fridge: { name: 'Fridge DPS', target: 125000, current: 0, due: '2027-06-30' },
+      durga: { name: 'Durga Puja Fund', target: 100000, current: 0, due: '2026-10-01' },
+      emergency: { name: 'Emergency Fund', target: 500000, current: 50000, due: '2027-12-31' }
+    },
+    currentCycle: 'May 2026',
+    salaryReminderDismissed: null
+  };
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s.items && Array.isArray(s.items)) return s;
+    }
+    // Try migrating from v3
+    const v3 = localStorage.getItem('soummo_money_v3');
+    if (v3) {
+      const s = JSON.parse(v3);
+      if (s.items && Array.isArray(s.items)) {
+        s.salaryReminderDismissed = null;
+        return s;
+      }
+    }
+  } catch(e) {}
+  return defaultState();
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+let state = loadState();
+
+function fmt(n) {
+  n = Math.round(n);
+  const neg = n < 0 ? '-' : '';
+  n = Math.abs(n);
+  const s = n.toString();
+  if (s.length <= 3) return neg + s;
+  const last3 = s.slice(-3);
+  let rest = s.slice(0, -3);
+  rest = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',');
+  return neg + rest + ',' + last3;
+}
+
+function fmtDate(d) {
+  if (typeof d === 'string') d = new Date(d);
+  const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return d.getDate() + ' ' + m[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function daysBetween(future) {
+  if (typeof future === 'string') future = new Date(future);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.ceil((future - today) / (1000*60*60*24));
+}
+
+function isSalaryDayOrAfter() {
+  const today = new Date();
+  return today.getDate() >= SALARY_DAY_NUMBER;
+}
+
+function shouldShowSalaryBanner() {
+  if (!isSalaryDayOrAfter()) return false;
+  // Check if already dismissed/used this cycle
+  if (state.salaryReminderDismissed) {
+    const dismissed = new Date(state.salaryReminderDismissed);
+    const today = new Date();
+    // If dismissed before current salary day, show again
+    const salaryDayThisCycle = new Date(today.getFullYear(), today.getMonth(), SALARY_DAY_NUMBER);
+    if (today.getDate() < SALARY_DAY_NUMBER) {
+      salaryDayThisCycle.setMonth(salaryDayThisCycle.getMonth() - 1);
+    }
+    if (dismissed >= salaryDayThisCycle) return false;
+  }
+  return true;
+}
+
+function totalDue() {
+  return state.items.reduce((sum, i) => {
+    if (i.status === 'partial') return sum + (i.amount - i.paid);
+    if (i.status === 'due') return sum + i.amount;
+    return sum;
+  }, 0);
+}
+
+function totalPaid() {
+  return state.items.reduce((sum, i) => sum + i.paid, 0);
+}
+
+function totalDaily() {
+  return state.dailyExpenses.reduce((sum, e) => sum + e.amount, 0);
+}
+
+function cashAfter() {
+  return state.cashOnHand - totalDue() - totalDaily();
+}
+
+function getAlerts() {
+  const alerts = [];
+  const bracEmiDate = getBracEmiDay();
+  const salaryDate = getNextSalaryDay();
+  const bracDays = daysBetween(bracEmiDate);
+  const salaryDays = daysBetween(salaryDate);
+  
+  // BIG BANNER: Salary day or after
+  if (shouldShowSalaryBanner()) {
+    alerts.push({
+      type: 'banner',
+      icon: '🎉',
+      title: 'Salary day! New cycle ready',
+      sub: 'Tap rollover when salary lands to start fresh month',
+      action: 'rollover'
+    });
+  }
+  
+  const bracItem = state.items.find(i => i.id === 'brac-emi');
+  if (bracItem && bracItem.status !== 'paid' && bracDays >= 0 && bracDays <= 7) {
+    alerts.push({
+      icon: '🔔',
+      title: bracDays === 0 ? 'BRAC EMI DUE TODAY' : `BRAC EMI due in ${bracDays} days`,
+      sub: `${fmt(bracItem.amount)} BDT · Jun 25`
+    });
+  }
+  
+  if (salaryDays >= 0 && salaryDays <= 3 && !shouldShowSalaryBanner()) {
+    alerts.push({
+      icon: '💰',
+      title: salaryDays === 0 ? 'Salary lands today' : `Salary in ${salaryDays} days`,
+      sub: 'Plan for next cycle'
+    });
+  }
+
+  const left = cashAfter();
+  if (left < 20000 && left >= 0) {
+    alerts.push({
+      icon: '⚠️',
+      title: 'Cash buffer tight',
+      sub: `Only ${fmt(left)} left after dues`
+    });
+  } else if (left < 0) {
+    alerts.push({
+      icon: '🛑',
+      title: 'Over budget',
+      sub: `Short by ${fmt(Math.abs(left))} BDT`
+    });
+  }
+
+  return alerts;
+}
+
+function nextActionMsg() {
+  const due = totalDue();
+  const cash = state.cashOnHand;
+  const left = cashAfter();
+  const salaryDate = getNextSalaryDay();
+  const days = daysBetween(salaryDate);
+
+  const nextDue = state.items
+    .filter(i => i.status !== 'paid' && i.amount > 0)
+    .sort((a,b) => {
+      const order = { 'brac-emi': 1, 'rent': 2, 'garage': 3 };
+      return (order[a.id]||99) - (order[b.id]||99);
+    })[0];
+
+  if (due === 0 && totalDaily() === 0) {
+    return { cls: '', html: `✅ <strong>Cycle clear.</strong> ${fmt(cash)} cash. Salary in ${days}d.` };
+  }
+  if (left < 0) {
+    return { cls: 'warn', html: `🛑 <strong>Over by ${fmt(Math.abs(left))}.</strong> Cut extras now.` };
+  }
+  if (left < 20000) {
+    return { cls: 'warn', html: `⚠️ <strong>Tight: ${fmt(left)} left.</strong> Hold off on extras.` };
+  }
+  if (nextDue && nextDue.id === 'brac-emi') {
+    return { cls: '', html: `📅 <strong>Next: BRAC EMI ${fmt(nextDue.amount)}</strong> due Jun 25.` };
+  }
+  if (nextDue) {
+    return { cls: '', html: `➡️ <strong>Next: ${nextDue.name}</strong> · ${fmt(nextDue.amount - nextDue.paid)} BDT.` };
+  }
+  return { cls: '', html: `✅ Tracking. Buffer: ${fmt(left)}.` };
+}
+
+function render() {
+  renderAlerts();
+  document.querySelectorAll('#top-tabs .tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.screen === state.activeScreen);
+  });
+  const root = document.getElementById('screen-root');
+  if (state.activeScreen === 'home') root.innerHTML = homeScreen();
+  else if (state.activeScreen === 'daily') root.innerHTML = dailyScreen();
+  else if (state.activeScreen === 'goals') root.innerHTML = goalsScreen();
+  else if (state.activeScreen === 'history') root.innerHTML = historyScreen();
+  else if (state.activeScreen === 'settings') root.innerHTML = settingsScreen();
+  bindEvents();
+  saveState();
+}
+
+function renderAlerts() {
+  const alerts = getAlerts();
+  const zone = document.getElementById('alerts-zone');
+  if (alerts.length === 0) { zone.innerHTML = ''; return; }
+  zone.innerHTML = alerts.map(a => {
+    const isBanner = a.type === 'banner';
+    return `<div class="alert ${isBanner ? 'big-banner' : ''}">
+      <span class="alert-icon">${a.icon}</span>
+      <div class="alert-c">
+        <div class="alert-t">${a.title}</div>
+        <div class="alert-s">${a.sub}</div>
+      </div>
+      ${a.action === 'rollover' ? '<button class="alert-btn" id="banner-rollover">Rollover →</button>' : ''}
+    </div>`;
+  }).join('');
+  
+  const rb = document.getElementById('banner-rollover');
+  if (rb) rb.onclick = doRollover;
+}
+
+function homeScreen() {
+  const next = nextActionMsg();
+  const salaryDate = getNextSalaryDay();
+  const days = daysBetween(salaryDate);
+  return `
+    <div class="terra">
+      <div class="eyebrow">DAYS TO SALARY · ${days < 0 ? 'PASSED' : fmtDate(salaryDate).toUpperCase()}</div>
+      <div class="row" style="margin-top:6px">
+        <div>
+          <div class="big">${days > 0 ? days : 0}</div>
+          <div class="small">${days <= 0 ? 'salary day!' : 'days remaining'}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="big">${fmt(state.cashOnHand)}</div>
+          <div class="small">cash on hand</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-num" style="color:var(--teal)">${fmt(totalPaid())}</div><div class="stat-lbl">paid</div></div>
+      <div class="stat"><div class="stat-num" style="color:var(--terracotta)">${fmt(totalDue())}</div><div class="stat-lbl">due</div></div>
+      <div class="stat"><div class="stat-num">${fmt(cashAfter())}</div><div class="stat-lbl">left</div></div>
+    </div>
+
+    <div class="helper ${next.cls}">${next.html}</div>
+
+    <div class="legend">
+      <div class="legend-row"><div class="legend-icon due">○</div><span>Due</span></div>
+      <div class="legend-row"><div class="legend-icon partial">½</div><span>Partial</span></div>
+      <div class="legend-row"><div class="legend-icon paid">✓</div><span>Paid</span></div>
+      <div style="margin-left:auto; font-style:italic">tap to change</div>
+    </div>
+
+    <div class="tabs">
+      <button class="sub-tab tab ${state.activeTab==='due'?'active':''}" data-subtab="due">to pay</button>
+      <button class="sub-tab tab ${state.activeTab==='paid'?'active':''}" data-subtab="paid">paid</button>
+      <button class="sub-tab tab ${state.activeTab==='all'?'active':''}" data-subtab="all">all</button>
+    </div>
+
+    <div class="card" style="padding:0">
+      <div id="items-list">${renderItems()}</div>
+      <button class="fab" id="add-btn">+ add extra expense</button>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="cash-btn">💰 edit cash</button>
+      <button class="btn dark" id="archive-btn">📦 archive</button>
+      <button class="btn primary" id="rollover-btn">→ rollover</button>
+    </div>
+  `;
+}
+
+function renderItems() {
+  const tab = state.activeTab;
+  const filtered = state.items.filter(i => {
+    if (tab === 'due') return i.status !== 'paid' && i.amount > 0;
+    if (tab === 'paid') return i.status === 'paid' || (i.status === 'partial' && i.paid > 0);
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    return `<div class="empty">${tab === 'due' ? 'Nothing pending.<br>Cycle clear. 🙏' : tab === 'paid' ? 'Nothing paid yet.' : 'No items.'}</div>`;
+  }
+
+  return filtered.map(i => {
+    const isPaid = i.status === 'paid';
+    const isPartial = i.status === 'partial';
+    const remaining = isPartial ? (i.amount - i.paid) : (isPaid ? 0 : i.amount);
+    const pct = i.amount > 0 ? (i.paid / i.amount) * 100 : 0;
+    let pill = '';
+    if (i.cat === 'Religious') pill = '<span class="pill pill-rel">🪔</span>';
+    else if (i.cat === 'Loan') pill = '<span class="pill pill-loan">loan</span>';
+    else if (i.cat === 'Investment') pill = '<span class="pill pill-inv">save</span>';
+    else if (i.cat === 'Extra') pill = '<span class="pill pill-extra">extra</span>';
+
+    return `<div class="item ${isPaid ? 'done' : ''} ${isPartial ? 'partial' : ''}" data-id="${i.id}">
+      <div class="content" data-edit="${i.id}">
+        <div class="name-row">
+          <span class="name">${i.name}</span>${pill}
+        </div>
+        ${i.note ? `<div class="meta">${i.note}</div>` : ''}
+        ${isPartial && i.paid > 0 ? `<div class="paid-info">paid ${fmt(i.paid)} of ${fmt(i.amount)}</div>` : ''}
+        ${isPartial ? `<div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div>` : ''}
+      </div>
+      <div class="amt-block">
+        <div class="amt">${fmt(i.amount)}</div>
+        ${isPaid ? `<div class="amt-paid">✓ paid</div>` : isPartial ? `<div class="amt-due">${fmt(remaining)} left</div>` : `<div class="amt-due">due</div>`}
+      </div>
+      <div class="status-btns">
+        <button class="s-btn ${i.status === 'due' ? 'active due-state' : ''}" data-set="${i.id}|due">○</button>
+        <button class="s-btn ${i.status === 'partial' ? 'active partial-state' : ''}" data-set="${i.id}|partial">½</button>
+        <button class="s-btn ${i.status === 'paid' ? 'active paid-state' : ''}" data-set="${i.id}|paid">✓</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function dailyScreen() {
+  const total = totalDaily();
+  const grouped = {};
+  state.dailyExpenses.forEach(e => {
+    const k = e.date;
+    if (!grouped[k]) grouped[k] = [];
+    grouped[k].push(e);
+  });
+  const dates = Object.keys(grouped).sort().reverse();
+
+  return `
+    <div class="forest">
+      <div class="eyebrow">DAILY SPEND · THIS CYCLE</div>
+      <div class="row" style="margin-top:6px">
+        <div>
+          <div class="big">${fmt(total)}</div>
+          <div class="small">total logged</div>
+        </div>
+        <div style="text-align:right">
+          <div class="big">${state.dailyExpenses.length}</div>
+          <div class="small">transactions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow" style="margin-bottom:10px; color:var(--teal)">QUICK ADD</div>
+      <div class="qc">
+        <button class="qc-btn" data-quick="grocery"><span style="font-size:22px">🛒</span><span>grocery</span></button>
+        <button class="qc-btn" data-quick="fuel"><span style="font-size:22px">⛽</span><span>fuel</span></button>
+        <button class="qc-btn" data-quick="food"><span style="font-size:22px">🍽️</span><span>food</span></button>
+        <button class="qc-btn" data-quick="baby"><span style="font-size:22px">👶</span><span>baby</span></button>
+        <button class="qc-btn" data-quick="transport"><span style="font-size:22px">🚗</span><span>transport</span></button>
+        <button class="qc-btn" data-quick="other"><span style="font-size:22px">···</span><span>other</span></button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0">
+      ${dates.length === 0 ? '<div class="empty">No daily expenses yet.<br><br>Tap a button above to log one ☝️</div>' : 
+        dates.map(d => {
+          const dayTotal = grouped[d].reduce((s,e) => s+e.amount, 0);
+          return `<div class="day-hdr"><span>${fmtDate(d)}</span><span>${fmt(dayTotal)}</span></div>` +
+          grouped[d].map(e => `
+            <div class="day-log">
+              <div class="day-log-l">
+                <div class="day-log-n">${e.label}</div>
+                ${e.note ? `<div class="day-log-c">${e.note}</div>` : ''}
+              </div>
+              <div style="text-align:right">
+                <div class="day-log-a">${fmt(e.amount)}</div>
+                <button class="btn" style="padding:3px 8px; font-size:10px; margin-top:4px" data-del-daily="${e.id}">delete</button>
+              </div>
+            </div>
+          `).join('');
+        }).join('')
+      }
+    </div>
+  `;
+}
+
+function goalsScreen() {
+  const g = state.goals;
+  return `
+    <div class="forest">
+      <div class="eyebrow">YOUR GOALS · FINANCIAL FREEDOM</div>
+      <div class="big" style="margin-top:4px">${Object.keys(g).length} active</div>
+      <div class="small">tap any goal to update</div>
+    </div>
+
+    ${Object.entries(g).map(([id, goal]) => {
+      const pct = Math.min(100, (goal.current / goal.target) * 100);
+      const days = daysBetween(goal.due);
+      const remaining = goal.target - goal.current;
+      let color = 'var(--teal)';
+      if (id === 'ebl') color = 'var(--terracotta)';
+      else if (id === 'brac') color = 'var(--burgundy)';
+      else if (id === 'durga') color = 'var(--terracotta)';
+      else if (id === 'emergency') color = 'var(--forest)';
+
+      return `<div class="goal-card" data-goal="${id}">
+        <div class="goal-r">
+          <div>
+            <div class="goal-n">${goal.name}</div>
+            <div class="goal-m">${days > 0 ? `${days} days to go` : days === 0 ? 'Due today' : `${Math.abs(days)} days overdue`}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="goal-v">${fmt(goal.current)}</div>
+            <div class="goal-m">of ${fmt(goal.target)}</div>
+          </div>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width:${pct}%; background:${color}"></div></div>
+        <div class="row" style="font-size:11px; color:var(--text-muted); margin-top:8px">
+          <span>${pct.toFixed(1)}% complete</span>
+          <span>${fmt(remaining)} remaining</span>
+        </div>
+      </div>`;
+    }).join('')}
+
+    <button class="fab" id="add-goal-btn">+ add new goal</button>
+  `;
+}
+
+function historyScreen() {
+  return `
+    <div class="forest">
+      <div class="eyebrow">PAST CYCLES · YOUR JOURNEY</div>
+      <div class="big" style="margin-top:4px">${state.history.length}</div>
+      <div class="small">cycles tracked · tap to view detail</div>
+    </div>
+
+    ${state.history.length === 0 ? 
+      '<div class="card"><div class="empty">No past cycles yet.<br><br>Tap "Archive" or "Rollover"<br>on home screen to save a cycle.</div></div>' :
+      state.history.slice().reverse().map(h => {
+        const surplus = h.cashStart + h.salaryAdded - h.totalSpent;
+        const savingsRate = h.salaryAdded > 0 ? Math.round((surplus / h.salaryAdded) * 100) : 0;
+        const dailyCount = h.dailyExpenses ? h.dailyExpenses.length : 0;
+        return `<div class="hist-c" data-hist="${h.id}">
+          <div class="row">
+            <div>
+              <div style="font-size:14px; font-weight:600">${h.cycle}</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:3px">${h.itemsPaid} bills · ${dailyCount} daily logs</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:18px; font-family:var(--serif); font-style:italic; color:var(--terracotta)">${fmt(h.totalSpent)}</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-top:3px">spent</div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px; font-size:11px; color:var(--text-muted)">
+            <span>Saved ${savingsRate}% · Surplus ${fmt(surplus)}</span>
+            <span style="color:var(--terracotta); font-weight:600">view →</span>
+          </div>
+        </div>`;
+      }).join('')
+    }
+  `;
+}
+
+function settingsScreen() {
+  return `
+    <div class="forest">
+      <div class="eyebrow">DATA · BACKUP · SETTINGS</div>
+      <div class="big" style="margin-top:4px">Your Data</div>
+      <div class="small">backup, restore, export</div>
+    </div>
+
+    <div class="section-h">BACKUP & RESTORE</div>
+
+    <div class="card">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px">💾 Backup All Data</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5">
+        Downloads a JSON file with everything: current cycle, daily expenses, history, goals.
+        Keep it safe in Google Drive or email it to yourself.
+      </div>
+      <button class="btn primary" id="backup-btn">📥 Download Backup</button>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px">📤 Restore from Backup</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5">
+        Upload a backup file to restore. Useful if switching phones or browsers.
+        ⚠️ This will REPLACE all current data.
+      </div>
+      <button class="btn" id="restore-btn">📁 Choose backup file</button>
+    </div>
+
+    <div class="section-h">EXPORT</div>
+
+    <div class="card">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px">📊 Export Current Cycle (CSV)</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5">
+        Export this month's bills + daily expenses to CSV.
+        Open in Excel, Google Sheets, or Numbers.
+      </div>
+      <button class="btn" id="csv-current-btn">📄 Export this cycle CSV</button>
+    </div>
+
+    <div class="card">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px">📊 Export All History (CSV)</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5">
+        Export ALL past cycles summary to one CSV file. Great for yearly review.
+      </div>
+      <button class="btn" id="csv-history-btn">📄 Export all history CSV</button>
+    </div>
+
+    <div class="section-h">DANGER ZONE</div>
+
+    <div class="card" style="border-color:rgba(196,69,54,0.3)">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px; color:var(--terracotta)">⚠️ Reset App</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; line-height:1.5">
+        Erase ALL data and start fresh. Cannot be undone.
+        ⚠️ Backup first!
+      </div>
+      <button class="btn" style="color:var(--terracotta); border-color:var(--terracotta)" id="reset-app-btn">🗑️ Reset Everything</button>
+    </div>
+
+    <div class="section-h">ABOUT</div>
+
+    <div class="card" style="text-align:center">
+      <div style="font-family:var(--serif); font-style:italic; font-size:20px; color:var(--terracotta)">your story; continued</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:6px">soummo · money · v.04 · MMXXVI</div>
+    </div>
+  `;
+}
+
+function bindEvents() {
+  document.querySelectorAll('.sub-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      state.activeTab = t.dataset.subtab;
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-set]').forEach(b => {
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const [id, status] = b.dataset.set.split('|');
+      setStatus(id, status);
+    });
+  });
+  document.querySelectorAll('[data-edit]').forEach(c => {
+    c.addEventListener('click', () => openItemModal(c.dataset.edit));
+  });
+  const addBtn = document.getElementById('add-btn');
+  if (addBtn) addBtn.onclick = () => openAddModal();
+  const cashBtn = document.getElementById('cash-btn');
+  if (cashBtn) cashBtn.onclick = openCashModal;
+  const archiveBtn = document.getElementById('archive-btn');
+  if (archiveBtn) archiveBtn.onclick = archiveCycle;
+  const rolloverBtn = document.getElementById('rollover-btn');
+  if (rolloverBtn) rolloverBtn.onclick = doRollover;
+
+  document.querySelectorAll('[data-quick]').forEach(b => {
+    b.addEventListener('click', () => openQuickAdd(b.dataset.quick));
+  });
+  document.querySelectorAll('[data-del-daily]').forEach(b => {
+    b.addEventListener('click', () => {
+      const id = b.dataset.delDaily;
+      state.dailyExpenses = state.dailyExpenses.filter(e => e.id !== id);
+      render();
+    });
+  });
+  document.querySelectorAll('[data-goal]').forEach(g => {
+    g.addEventListener('click', () => openGoalModal(g.dataset.goal));
+  });
+  const addGoalBtn = document.getElementById('add-goal-btn');
+  if (addGoalBtn) addGoalBtn.onclick = openAddGoalModal;
+  document.querySelectorAll('[data-hist]').forEach(b => {
+    b.addEventListener('click', () => openHistoryDetail(b.dataset.hist));
+  });
+
+  // Settings screen buttons
+  const backupBtn = document.getElementById('backup-btn');
+  if (backupBtn) backupBtn.onclick = downloadBackup;
+  const restoreBtn = document.getElementById('restore-btn');
+  if (restoreBtn) restoreBtn.onclick = () => document.getElementById('restore-file-input').click();
+  const csvCurBtn = document.getElementById('csv-current-btn');
+  if (csvCurBtn) csvCurBtn.onclick = exportCurrentCsv;
+  const csvHistBtn = document.getElementById('csv-history-btn');
+  if (csvHistBtn) csvHistBtn.onclick = exportHistoryCsv;
+  const resetBtn = document.getElementById('reset-app-btn');
+  if (resetBtn) resetBtn.onclick = resetApp;
+}
+
+function setStatus(id, status) {
+  const item = state.items.find(i => i.id === id);
+  if (!item) return;
+  if (status === 'paid') {
+    item.status = 'paid';
+    item.paid = item.amount;
+    if (id === 'durga' && state.goals.durga) {
+      state.goals.durga.current = Math.min(state.goals.durga.target, state.goals.durga.current + item.amount);
+    }
+    if ((id === 'brac-emi' || id === 'brac-extra') && state.goals.brac) {
+      state.goals.brac.current = Math.min(state.goals.brac.target, state.goals.brac.current + item.amount);
+    }
+    render();
+  } else if (status === 'due') {
+    if (id === 'durga' && state.goals.durga) {
+      state.goals.durga.current = Math.max(0, state.goals.durga.current - item.paid);
+    }
+    if ((id === 'brac-emi' || id === 'brac-extra') && state.goals.brac) {
+      state.goals.brac.current = Math.max(0, state.goals.brac.current - item.paid);
+    }
+    item.status = 'due';
+    item.paid = 0;
+    render();
+  } else if (status === 'partial') {
+    openPartialModal(id);
+  }
+}
+
+function showModal(html, bindFn) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `<div class="modal-bd" id="mb"><div class="modal">${html}</div></div>`;
+  document.getElementById('mb').onclick = (e) => { if (e.target.id === 'mb') root.innerHTML = ''; };
+  if (bindFn) bindFn();
+}
+
+function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+function openPartialModal(id) {
+  const item = state.items.find(i => i.id === id);
+  if (!item) return;
+  showModal(`
+    <div class="modal-t">${item.name}</div>
+    <div class="modal-s">how much paid so far?</div>
+    
+    <div class="split-row">
+      <div>
+        <div class="split-lbl">total</div>
+        <div class="split-amt">${fmt(item.amount)}</div>
+      </div>
+      <div class="split-divider"></div>
+      <div style="text-align:right">
+        <div class="split-lbl">already paid</div>
+        <div class="split-amt" style="color:var(--teal)">${fmt(item.paid || 0)}</div>
+      </div>
+    </div>
+
+    <div class="ig">
+      <label class="ig-l">amount paid (BDT)</label>
+      <input class="ip" type="number" inputmode="numeric" id="p-amount" value="${item.paid || 0}" autofocus />
+    </div>
+
+    <div class="ig">
+      <label class="ig-l">note</label>
+      <input class="ip" type="text" id="p-note" value="${item.note || ''}" placeholder="what's done, what's left…" />
+    </div>
+
+    <div style="display:flex; gap:6px">
+      <button class="btn" id="p-cancel">cancel</button>
+      <button class="btn primary" id="p-save">save</button>
+    </div>
+  `, () => {
+    document.getElementById('p-cancel').onclick = closeModal;
+    document.getElementById('p-save').onclick = () => {
+      const paid = parseInt(document.getElementById('p-amount').value) || 0;
+      item.paid = Math.min(paid, item.amount);
+      item.note = document.getElementById('p-note').value;
+      if (item.paid >= item.amount && item.amount > 0) item.status = 'paid';
+      else if (item.paid > 0) item.status = 'partial';
+      else item.status = 'due';
+      closeModal();
+      render();
+    };
+    setTimeout(() => {
+      const inp = document.getElementById('p-amount');
+      if (inp) { inp.focus(); inp.select(); }
+    }, 100);
+  });
+}
+
+function openItemModal(id) {
+  const item = state.items.find(i => i.id === id);
+  if (!item) return;
+  showModal(`
+    <div class="modal-t">${item.name}</div>
+    <div class="modal-s">edit details</div>
+    <div class="ig"><label class="ig-l">total amount (BDT)</label><input class="ip" type="number" inputmode="numeric" id="m-amount" value="${item.amount}" /></div>
+    <div class="ig"><label class="ig-l">paid so far (BDT)</label><input class="ip" type="number" inputmode="numeric" id="m-paid" value="${item.paid}" /></div>
+    <div class="ig"><label class="ig-l">note</label><input class="ip" type="text" id="m-note" value="${item.note || ''}" placeholder="ongoing, half done…" /></div>
+    <div style="display:flex; gap:6px"><button class="btn" id="m-cancel">cancel</button><button class="btn" id="m-delete" style="color:var(--terracotta)">delete</button><button class="btn primary" id="m-save">save</button></div>
+  `, () => {
+    document.getElementById('m-cancel').onclick = closeModal;
+    document.getElementById('m-delete').onclick = () => {
+      if (!confirm('Delete this item?')) return;
+      state.items = state.items.filter(i => i.id !== id);
+      closeModal();
+      render();
+    };
+    document.getElementById('m-save').onclick = () => {
+      const newAmt = parseInt(document.getElementById('m-amount').value) || 0;
+      const newPaid = parseInt(document.getElementById('m-paid').value) || 0;
+      item.amount = newAmt;
+      item.paid = Math.min(newPaid, newAmt);
+      item.note = document.getElementById('m-note').value;
+      if (item.paid >= item.amount && item.amount > 0) item.status = 'paid';
+      else if (item.paid > 0) item.status = 'partial';
+      else item.status = 'due';
+      closeModal();
+      render();
+    };
+  });
+}
+
+function openAddModal() {
+  showModal(`
+    <div class="modal-t">new expense</div>
+    <div class="modal-s">add extra item to this cycle</div>
+    <div class="ig"><label class="ig-l">name</label><input class="ip" type="text" id="a-name" placeholder="e.g. medical, repair" /></div>
+    <div class="ig"><label class="ig-l">amount (BDT)</label><input class="ip" type="number" inputmode="numeric" id="a-amount" placeholder="0" /></div>
+    <div style="display:flex; gap:6px"><button class="btn" id="a-cancel">cancel</button><button class="btn primary" id="a-save">add</button></div>
+  `, () => {
+    document.getElementById('a-cancel').onclick = closeModal;
+    document.getElementById('a-save').onclick = () => {
+      const name = document.getElementById('a-name').value.trim();
+      const amt = parseInt(document.getElementById('a-amount').value) || 0;
+      if (!name || amt <= 0) return;
+      state.items.push({ id: 'extra-'+Date.now(), name, amount: amt, cat: 'Extra', status: 'due', paid: 0, note: 'extra this cycle' });
+      closeModal();
+      render();
+    };
+    setTimeout(() => {
+      const inp = document.getElementById('a-name');
+      if (inp) inp.focus();
+    }, 100);
+  });
+}
+
+function openCashModal() {
+  showModal(`
+    <div class="modal-t">edit cash</div>
+    <div class="modal-s">update your cash on hand</div>
+    <div class="ig"><label class="ig-l">cash on hand (BDT)</label><input class="ip" type="number" inputmode="numeric" id="c-cash" value="${state.cashOnHand}" /></div>
+    <div class="ig"><label class="ig-l">salary amount (BDT)</label><input class="ip" type="number" inputmode="numeric" id="c-salary" value="${state.salaryAmount}" /></div>
+    <div style="display:flex; gap:6px"><button class="btn" id="c-cancel">cancel</button><button class="btn primary" id="c-save">save</button></div>
+  `, () => {
+    document.getElementById('c-cancel').onclick = closeModal;
+    document.getElementById('c-save').onclick = () => {
+      state.cashOnHand = parseInt(document.getElementById('c-cash').value) || 0;
+      state.salaryAmount = parseInt(document.getElementById('c-salary').value) || 0;
+      closeModal();
+      render();
+    };
+  });
+}
+
+function openQuickAdd(type) {
+  const labels = { grocery: 'Grocery', fuel: 'Fuel', food: 'Food', baby: 'Baby items', transport: 'Transport', other: 'Other' };
+  const today = new Date();
+  showModal(`
+    <div class="modal-t">${labels[type]}</div>
+    <div class="modal-s">${fmtDate(today)}</div>
+    <div class="ig"><label class="ig-l">amount (BDT)</label><input class="ip" type="number" inputmode="numeric" id="q-amount" placeholder="0" /></div>
+    <div class="ig"><label class="ig-l">note (optional)</label><input class="ip" type="text" id="q-note" placeholder="where, what…" /></div>
+    <div style="display:flex; gap:6px"><button class="btn" id="q-cancel">cancel</button><button class="btn primary" id="q-save">log it</button></div>
+  `, () => {
+    document.getElementById('q-cancel').onclick = closeModal;
+    document.getElementById('q-save').onclick = () => {
+      const amt = parseInt(document.getElementById('q-amount').value) || 0;
+      if (amt <= 0) return;
+      state.dailyExpenses.push({
+        id: 'd-'+Date.now(),
+        label: labels[type],
+        amount: amt,
+        date: today.toISOString().split('T')[0],
+        note: document.getElementById('q-note').value,
+        cat: type
+      });
+      closeModal();
+      render();
+    };
+    setTimeout(() => {
+      const inp = document.getElementById('q-amount');
+      if (inp) inp.focus();
+    }, 100);
+  });
+}
+
+function openGoalModal(id) {
+  const goal = state.goals[id];
+  if (!goal) return;
+  showModal(`
+    <div class="modal-t">${goal.name}</div>
+    <div class="modal-s">${fmt(goal.current)} of ${fmt(goal.target)}</div>
+    <div class="ig"><label class="ig-l">current saved/paid</label><input class="ip" type="number" inputmode="numeric" id="g-cur" value="${goal.current}" /></div>
+    <div class="ig"><label class="ig-l">target</label><input class="ip" type="number" inputmode="numeric" id="g-tar" value="${goal.target}" /></div>
+    <div class="ig"><label class="ig-l">target date</label><input class="ip" type="date" id="g-due" value="${goal.due}" /></div>
+    <div style="display:flex; gap:6px"><button class="btn" id="g-cancel">cancel</button><button class="btn" id="g-del" style="color:var(--terracotta)">delete</button><button class="btn primary" id="g-save">save</button></div>
+  `, () => {
+    document.getElementById('g-cancel').onclick = closeModal;
+    document.getElementById('g-del').onclick = () => {
+      if (!confirm('Delete this goal?')) return;
+      delete state.goals[id];
+      closeModal();
+      render();
+    };
+    document.getElementById('g-save').onclick = () => {
+      goal.current = parseInt(document.getElementById('g-cur').value) || 0;
+      goal.target = parseInt(document.getElementById('g-tar').value) || 1;
+      goal.due = document.getElementById('g-due').value;
+      closeModal();
+      render();
+    };
+  });
+}
+
+function openAddGoalModal() {
+  showModal(`
+    <div class="modal-t">new goal</div>
+    <div class="modal-s">track anything you're saving for</div>
+    <div class="ig"><label class="ig-l">name</label><input class="ip" type="text" id="ng-name" placeholder="e.g. Bike, Vacation" /></div>
+    <div class="ig"><label class="ig-l">target (BDT)</label><input class="ip" type="number" inputmode="numeric" id="ng-tar" placeholder="50000" /></div>
+    <div class="ig"><label class="ig-l">current saved</label><input class="ip" type="number" inputmode="numeric" id="ng-cur" value="0" /></div>
+    <div class="ig"><label class="ig-l">target date</label><input class="ip" type="date" id="ng-due" /></div>
+    <div style="display:flex; gap:6px"><button class="btn" id="ng-cancel">cancel</button><button class="btn primary" id="ng-save">add</button></div>
+  `, () => {
+    document.getElementById('ng-cancel').onclick = closeModal;
+    document.getElementById('ng-save').onclick = () => {
+      const name = document.getElementById('ng-name').value.trim();
+      const tar = parseInt(document.getElementById('ng-tar').value) || 0;
+      if (!name || tar <= 0) return;
+      const id = 'goal-'+Date.now();
+      state.goals[id] = {
+        name,
+        target: tar,
+        current: parseInt(document.getElementById('ng-cur').value) || 0,
+        due: document.getElementById('ng-due').value || '2027-12-31'
+      };
+      closeModal();
+      render();
+    };
+  });
+}
+
+function openHistoryDetail(histId) {
+  const h = state.history.find(x => x.id === histId);
+  if (!h) return;
+  
+  const surplus = h.cashStart + h.salaryAdded - h.totalSpent;
+  const savingsRate = h.salaryAdded > 0 ? Math.round((surplus / h.salaryAdded) * 100) : 0;
+  
+  const itemsList = (h.items || []).map(i => 
+    `<div class="hist-detail-row">
+      <div>
+        <div style="font-weight:600; font-size:13px">${i.name}</div>
+        ${i.note ? `<div style="font-size:11px; color:var(--text-muted)">${i.note}</div>` : ''}
+      </div>
+      <div style="text-align:right">
+        <strong>${fmt(i.paid)}</strong>
+        ${i.paid < i.amount ? `<div style="font-size:10px; color:var(--text-muted)">of ${fmt(i.amount)}</div>` : ''}
+      </div>
+    </div>`
+  ).join('');
+  
+  const dailyList = (h.dailyExpenses || []).slice(0, 20).map(d =>
+    `<div class="hist-detail-row">
+      <div>
+        <div style="font-weight:600; font-size:13px">${d.label}</div>
+        <div style="font-size:11px; color:var(--text-muted)">${fmtDate(d.date)}${d.note ? ' · ' + d.note : ''}</div>
+      </div>
+      <strong>${fmt(d.amount)}</strong>
+    </div>`
+  ).join('');
+  
+  const dailyCountText = (h.dailyExpenses || []).length;
+  
+  showModal(`
+    <div class="modal-t">${h.cycle}</div>
+    <div class="modal-s">archived ${fmtDate(h.archivedAt || new Date().toISOString())}</div>
+    
+    <div class="split-row">
+      <div>
+        <div class="split-lbl">spent</div>
+        <div class="split-amt" style="color:var(--terracotta)">${fmt(h.totalSpent)}</div>
+      </div>
+      <div class="split-divider"></div>
+      <div style="text-align:right">
+        <div class="split-lbl">saved</div>
+        <div class="split-amt" style="color:var(--teal)">${savingsRate}%</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px; font-size:12px; color:var(--text-muted)">
+      <div>Surplus: ${fmt(surplus)} BDT</div>
+      <div>${h.itemsPaid} bills · ${dailyCountText} daily expenses · ${h.daysCovered} days</div>
+    </div>
+
+    ${itemsList ? `<div class="section-h">BILLS PAID</div><div class="card" style="padding:0">${itemsList}</div>` : ''}
+    ${dailyList ? `<div class="section-h">DAILY EXPENSES ${dailyCountText > 20 ? '(top 20)' : ''}</div><div class="card" style="padding:0">${dailyList}</div>` : ''}
+    
+    <div style="display:flex; gap:6px; margin-top:14px">
+      <button class="btn" id="h-close">close</button>
+      <button class="btn" id="h-csv">📄 export CSV</button>
+      <button class="btn" id="h-delete" style="color:var(--terracotta)">delete</button>
+    </div>
+  `, () => {
+    document.getElementById('h-close').onclick = closeModal;
+    document.getElementById('h-delete').onclick = () => {
+      if (!confirm('Delete this cycle from history?')) return;
+      state.history = state.history.filter(x => x.id !== histId);
+      closeModal();
+      render();
+    };
+    document.getElementById('h-csv').onclick = () => exportSingleCycleCsv(h);
+  });
+}
+
+function archiveCycle() {
+  if (!confirm('Archive this cycle and save to history?\n\nAll daily expenses + bill statuses will be saved.')) return;
+  saveCycleToHistory(false);
+  render();
+}
+
+function doRollover() {
+  if (!confirm(`Start next cycle?\n\nThis will:\n• Save current cycle to history (with all daily expenses)\n• Add salary ${fmt(state.salaryAmount)} to cash\n• Reset all items to due\n• Advance to next month`)) return;
+  saveCycleToHistory(true);
+  
+  state.cashOnHand = cashAfter() + state.salaryAmount;
+  state.items.forEach(i => {
+    if (i.amount > 0) { i.status = 'due'; i.paid = 0; }
+  });
+  state.dailyExpenses = [];
+  state.salaryReminderDismissed = new Date().toISOString();
+  
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const cur = state.currentCycle.split(' ');
+  let mi = months.indexOf(cur[0]);
+  let yr = parseInt(cur[1]);
+  mi = (mi + 1) % 12;
+  if (mi === 0) yr++;
+  state.currentCycle = months[mi] + ' ' + yr;
+  const cyc = document.getElementById('cycle-label');
+  if (cyc) cyc.textContent = state.currentCycle.toLowerCase();
+  render();
+}
+
+function saveCycleToHistory(isRollover) {
+  const spent = totalPaid() + totalDaily();
+  const itemsPaid = state.items.filter(i => i.status === 'paid' || i.status === 'partial').length;
+  state.history.push({
+    id: 'h-'+Date.now(),
+    cycle: state.currentCycle,
+    cashStart: state.cashOnHand + spent,
+    salaryAdded: isRollover ? state.salaryAmount : 0,
+    totalSpent: spent,
+    itemsPaid,
+    daysCovered: 30,
+    items: JSON.parse(JSON.stringify(state.items)),
+    dailyExpenses: JSON.parse(JSON.stringify(state.dailyExpenses)),
+    archivedAt: new Date().toISOString()
+  });
+}
+
+function downloadBackup() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `soummo-money-backup-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert('✅ Backup downloaded! Keep this file safe — you can restore from it anytime.');
+}
+
+document.getElementById('restore-file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!confirm('⚠️ This will REPLACE all your current data with the backup.\n\nMake sure you backed up first if you have important data. Continue?')) {
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const restored = JSON.parse(ev.target.result);
+      if (!restored.items || !Array.isArray(restored.items)) {
+        alert('❌ Invalid backup file');
+        return;
+      }
+      state = restored;
+      saveState();
+      alert('✅ Data restored successfully!');
+      render();
+    } catch(err) {
+      alert('❌ Could not read backup file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+function csvEscape(s) {
+  if (s === null || s === undefined) return '';
+  s = String(s);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function downloadCsv(filename, rows) {
+  const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportCurrentCsv() {
+  const rows = [
+    ['Soummo Money — Current Cycle Export'],
+    ['Cycle', state.currentCycle],
+    ['Exported', fmtDate(new Date())],
+    ['Cash on Hand', state.cashOnHand],
+    [''],
+    ['=== BILLS ==='],
+    ['Name', 'Category', 'Total (BDT)', 'Paid (BDT)', 'Status', 'Note']
+  ];
+  state.items.forEach(i => {
+    rows.push([i.name, i.cat, i.amount, i.paid, i.status, i.note || '']);
+  });
+  rows.push(['']);
+  rows.push(['=== DAILY EXPENSES ===']);
+  rows.push(['Date', 'Category', 'Amount (BDT)', 'Note']);
+  state.dailyExpenses.forEach(d => {
+    rows.push([d.date, d.label, d.amount, d.note || '']);
+  });
+  rows.push(['']);
+  rows.push(['Total Paid (Bills)', totalPaid()]);
+  rows.push(['Total Daily', totalDaily()]);
+  rows.push(['Total Due', totalDue()]);
+  rows.push(['Cash After All Dues', cashAfter()]);
+  
+  const date = new Date().toISOString().split('T')[0];
+  downloadCsv(`soummo-${state.currentCycle.replace(' ','-')}-${date}.csv`, rows);
+  alert('✅ CSV downloaded! Open in Excel or Google Sheets.');
+}
+
+function exportHistoryCsv() {
+  if (state.history.length === 0) {
+    alert('No history to export yet.');
+    return;
+  }
+  const rows = [
+    ['Soummo Money — History Summary'],
+    ['Exported', fmtDate(new Date())],
+    [''],
+    ['Cycle', 'Cash Start', 'Salary Added', 'Total Spent', 'Surplus', 'Savings Rate %', 'Bills Paid', 'Daily Count', 'Archived']
+  ];
+  state.history.forEach(h => {
+    const surplus = h.cashStart + h.salaryAdded - h.totalSpent;
+    const sr = h.salaryAdded > 0 ? Math.round((surplus / h.salaryAdded) * 100) : 0;
+    const dailyCount = (h.dailyExpenses || []).length;
+    rows.push([h.cycle, h.cashStart, h.salaryAdded, h.totalSpent, surplus, sr, h.itemsPaid, dailyCount, fmtDate(h.archivedAt)]);
+  });
+  
+  const date = new Date().toISOString().split('T')[0];
+  downloadCsv(`soummo-history-${date}.csv`, rows);
+  alert('✅ History CSV downloaded!');
+}
+
+function exportSingleCycleCsv(h) {
+  const rows = [
+    ['Soummo Money — Cycle Export'],
+    ['Cycle', h.cycle],
+    ['Archived', fmtDate(h.archivedAt)],
+    [''],
+    ['=== BILLS ==='],
+    ['Name', 'Category', 'Total (BDT)', 'Paid (BDT)', 'Status', 'Note']
+  ];
+  (h.items || []).forEach(i => {
+    rows.push([i.name, i.cat, i.amount, i.paid, i.status, i.note || '']);
+  });
+  rows.push(['']);
+  rows.push(['=== DAILY EXPENSES ===']);
+  rows.push(['Date', 'Category', 'Amount (BDT)', 'Note']);
+  (h.dailyExpenses || []).forEach(d => {
+    rows.push([d.date, d.label, d.amount, d.note || '']);
+  });
+  rows.push(['']);
+  const surplus = h.cashStart + h.salaryAdded - h.totalSpent;
+  rows.push(['Total Spent', h.totalSpent]);
+  rows.push(['Surplus', surplus]);
+  
+  downloadCsv(`soummo-${h.cycle.replace(' ','-')}.csv`, rows);
+  alert('✅ Cycle CSV downloaded!');
+}
+
+function resetApp() {
+  if (!confirm('⚠️ This will ERASE everything: current cycle, daily expenses, history, goals.\n\nCannot be undone. Backup first!\n\nContinue?')) return;
+  if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('soummo_money_v3');
+  state = defaultState();
+  render();
+  alert('✅ App reset. Fresh start.');
+}
+
+document.querySelectorAll('#top-tabs .tab').forEach(t => {
+  t.addEventListener('click', () => {
+    state.activeScreen = t.dataset.screen;
+    state.activeTab = 'due';
+    render();
+  });
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
+render();
+</script>
+</body>
+</html>
