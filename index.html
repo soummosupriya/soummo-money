@@ -208,7 +208,7 @@ body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-are
 <script>
 const STORAGE_KEY = 'soummo_money_v4';
 const APP_TODAY = new Date();
-const SALARY_DAY_NUMBER = 28; // Day of month
+const SALARY_DAY_NUMBER = 28;
 
 function getNextSalaryDay() {
   const today = new Date();
@@ -251,8 +251,7 @@ function defaultItems() {
     { id: 'brac-emi', name: 'BRAC EMI', amount: 29000, cat: 'Loan', status: 'due', paid: 0, note: 'due jun 25' }
   ];
 }
-
-function defaultState() {
+  function defaultState() {
   return {
     cashOnHand: 270000,
     salaryAmount: 234000,
@@ -280,7 +279,6 @@ function loadState() {
       const s = JSON.parse(saved);
       if (s.items && Array.isArray(s.items)) return s;
     }
-    // Try migrating from v3
     const v3 = localStorage.getItem('soummo_money_v3');
     if (v3) {
       const s = JSON.parse(v3);
@@ -331,11 +329,9 @@ function isSalaryDayOrAfter() {
 
 function shouldShowSalaryBanner() {
   if (!isSalaryDayOrAfter()) return false;
-  // Check if already dismissed/used this cycle
   if (state.salaryReminderDismissed) {
     const dismissed = new Date(state.salaryReminderDismissed);
     const today = new Date();
-    // If dismissed before current salary day, show again
     const salaryDayThisCycle = new Date(today.getFullYear(), today.getMonth(), SALARY_DAY_NUMBER);
     if (today.getDate() < SALARY_DAY_NUMBER) {
       salaryDayThisCycle.setMonth(salaryDayThisCycle.getMonth() - 1);
@@ -372,7 +368,6 @@ function getAlerts() {
   const bracDays = daysBetween(bracEmiDate);
   const salaryDays = daysBetween(salaryDate);
   
-  // BIG BANNER: Salary day or after
   if (shouldShowSalaryBanner()) {
     alerts.push({
       type: 'banner',
@@ -786,8 +781,7 @@ function settingsScreen() {
     </div>
   `;
 }
-
-function bindEvents() {
+  function bindEvents() {
   document.querySelectorAll('.sub-tab').forEach(t => {
     t.addEventListener('click', () => {
       state.activeTab = t.dataset.subtab;
@@ -833,7 +827,6 @@ function bindEvents() {
     b.addEventListener('click', () => openHistoryDetail(b.dataset.hist));
   });
 
-  // Settings screen buttons
   const backupBtn = document.getElementById('backup-btn');
   if (backupBtn) backupBtn.onclick = downloadBackup;
   const restoreBtn = document.getElementById('restore-btn');
