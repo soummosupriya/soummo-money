@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#283D3B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="soummo;">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<title>soummo; money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;--forest:#283D3B;--cream:#FAF5F0;--terra:#C44536;--teal:#197278;--gold:#B98A2E;
+    --serif:'Instrument Serif',Georgia,serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --glass:rgba(255,255,255,0.62);--glass-strong:rgba(255,255,255,0.80);--glass-border:rgba(255,255,255,0.55);
+    --shadow:0 8px 30px rgba(40,61,59,0.12);--shadow-lg:0 18px 50px rgba(40,61,59,0.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--sans);color:var(--ink);background:var(--cream);
+    background-image:
+      radial-gradient(1200px 600px at 8% -5%, rgba(25,114,120,0.18), transparent 55%),
+      radial-gradient(1000px 700px at 105% 8%, rgba(196,69,54,0.13), transparent 50%),
+      radial-gradient(900px 900px at 50% 115%, rgba(40,61,59,0.20), transparent 55%);
+    background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  body.partner{
+    background-image:
+      radial-gradient(1100px 600px at 10% -5%, rgba(185,138,46,0.18), transparent 55%),
+      radial-gradient(1000px 700px at 105% 8%, rgba(25,114,120,0.13), transparent 50%),
+      radial-gradient(900px 900px at 50% 115%, rgba(40,61,59,0.18), transparent 55%);
+  }
+  .app{max-width:520px;margin:0 auto;padding:0 16px;padding-top:env(safe-area-inset-top);padding-bottom:calc(150px + env(safe-area-inset-bottom));}
+  header.top{padding:20px 4px 12px;display:flex;align-items:flex-end;justify-content:space-between;}
+  .brand{font-family:var(--serif);font-style:italic;font-size:30px;line-height:1;color:var(--forest);letter-spacing:-0.5px;}
+  .brand .semi{color:var(--terra);}
+  .brand small{display:block;font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(40,61,59,0.55);margin-top:4px;font-weight:600;}
+  #cycle-label{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--terra);text-align:right;}
+  #cycle-label small{display:block;font-family:var(--sans);font-style:normal;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(40,61,59,0.5);font-weight:600;}
+  .glass{background:var(--glass);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border:1px solid var(--glass-border);border-radius:22px;box-shadow:var(--shadow);}
+
+  .partner-banner{display:flex;align-items:center;gap:9px;padding:11px 15px;margin-bottom:13px;border-radius:15px;background:rgba(185,138,46,0.14);border:1px solid rgba(185,138,46,0.35);}
+  .partner-banner .pb-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+  .partner-banner .pb-txt{font-size:12px;color:var(--ink);font-weight:600;}
+  .partner-banner .pb-txt span{color:rgba(40,61,59,0.6);font-weight:400;}
+
+  .hero{padding:22px 20px 18px;margin-bottom:14px;}
+  .hero .label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:600;}
+  .hero .total{font-family:var(--serif);font-style:italic;font-size:46px;line-height:1.05;color:var(--ink);margin:2px 0 0;}
+  .hero .after{display:flex;align-items:baseline;gap:8px;margin-top:10px;padding-top:12px;border-top:1px dashed rgba(40,61,59,0.22);}
+  .hero .after .k{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:600;}
+  .hero .after .v{font-family:var(--serif);font-style:italic;font-size:26px;color:var(--teal);}
+  .hero .after .v.neg{color:var(--terra);}
+  .accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+  .acct{padding:12px 10px;text-align:center;cursor:pointer;transition:transform .15s ease;position:relative;}
+  .acct:active{transform:scale(0.97);}
+  .acct .nm{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:700;}
+  .acct .amt{font-family:var(--serif);font-style:italic;font-size:21px;color:var(--ink);margin-top:3px;line-height:1;}
+  .acct .amt.zero{color:rgba(10,10,10,0.35);}
+  .acct .edit-hint{position:absolute;top:6px;right:8px;font-size:10px;color:rgba(40,61,59,0.4);}
+
+  .sec-head{display:flex;align-items:center;justify-content:space-between;margin:18px 4px 10px;}
+  .sec-head h2{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--forest);font-weight:400;}
+  .sec-head .count{font-size:11px;color:rgba(40,61,59,0.55);font-weight:600;letter-spacing:.5px;}
+  .pull-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:rgba(40,61,59,0.78);text-align:center;padding:10px 24px 4px;line-height:1.45;}
+
+  /* priority do-now list */
+  .priority{padding:6px 6px 4px;margin-bottom:14px;}
+  .priority .ph{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--terra);font-weight:700;padding:10px 12px 8px;}
+  .prow{display:flex;align-items:center;gap:11px;padding:11px 13px;border-top:1px solid rgba(40,61,59,0.08);cursor:pointer;}
+  .prow:first-of-type{border-top:none;}
+  .prow .rank{font-family:var(--serif);font-style:italic;font-size:20px;color:rgba(40,61,59,0.4);min-width:20px;}
+  .prow .pmid{flex:1;}
+  .prow .pmid .pn{font-size:14px;font-weight:600;color:var(--ink);}
+  .prow .pmid .pd{font-size:11px;color:rgba(40,61,59,0.6);margin-top:1px;}
+  .prow .pamt{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink);}
+  .prow .urg{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:3px 7px;border-radius:999px;}
+  .urg.now{background:var(--terra);color:#fff;}
+  .urg.over{background:var(--ink);color:#fff;}
+  .urg.soon{background:rgba(185,138,46,0.18);color:var(--gold);}
+
+  .bills{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .bill{padding:13px 13px 12px;border-radius:18px;cursor:pointer;position:relative;overflow:hidden;background:var(--glass-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--glass-border);box-shadow:0 4px 16px rgba(40,61,59,0.08);transition:transform .14s ease;}
+  .bill:active{transform:scale(0.975);}
+  .bill .stripe{position:absolute;left:0;top:0;bottom:0;width:4px;background:rgba(40,61,59,0.18);}
+  .bill.paid .stripe{background:var(--teal);}
+  .bill.partial .stripe{background:var(--terra);}
+  .bill.advance .stripe{background:var(--gold);}
+  .bill .nm{font-size:13px;font-weight:600;color:var(--ink);line-height:1.2;padding-left:6px;display:flex;align-items:center;gap:5px;}
+  .bill .lock{font-size:10px;opacity:.5;}
+  .bill .amt{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ink);margin-top:6px;padding-left:6px;line-height:1;}
+  .bill .meta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-left:6px;gap:6px;}
+  .bill .win{font-size:10px;color:rgba(40,61,59,0.6);font-weight:600;letter-spacing:.3px;}
+  .bill .tag{font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:999px;white-space:nowrap;}
+  .tag.paid{background:rgba(25,114,120,0.16);color:var(--teal);}
+  .tag.partial{background:rgba(196,69,54,0.16);color:var(--terra);}
+  .tag.advance{background:rgba(185,138,46,0.18);color:var(--gold);}
+  .tag.due{background:rgba(40,61,59,0.12);color:rgba(40,61,59,0.7);}
+  .tag.duesoon{background:var(--terra);color:#fff;}
+  .bill .acctchip{font-size:9px;color:rgba(40,61,59,0.5);font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding-left:6px;margin-top:5px;}
+  .add-tile{display:flex;align-items:center;justify-content:center;border:1.5px dashed rgba(40,61,59,0.3);border-radius:18px;background:transparent;color:var(--forest);font-size:14px;font-weight:600;cursor:pointer;min-height:96px;}
+  .add-tile:active{background:rgba(40,61,59,0.05);}
+
+  .alert{display:flex;gap:11px;align-items:flex-start;padding:13px 15px;margin-bottom:10px;border-radius:16px;background:rgba(196,69,54,0.10);border:1px solid rgba(196,69,54,0.30);}
+  .alert .dot{width:8px;height:8px;border-radius:50%;background:var(--terra);margin-top:5px;flex-shrink:0;animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
+  .alert .txt{font-size:12.5px;color:var(--ink);line-height:1.4;}
+  .alert .txt b{color:var(--terra);}
+
+  .filters{display:flex;gap:6px;margin-bottom:12px;}
+  .filters button{flex:1;padding:9px;border:none;border-radius:12px;background:var(--glass);font-family:var(--sans);font-size:12px;font-weight:600;color:rgba(40,61,59,0.7);cursor:pointer;border:1px solid var(--glass-border);}
+  .filters button.on{background:var(--forest);color:var(--cream);}
+  .daily-add{padding:16px;margin-bottom:14px;}
+  .daily-add .row{display:flex;gap:8px;margin-bottom:9px;}
+  .field{flex:1;}
+  .field label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:700;margin-bottom:4px;}
+  input,select,textarea{width:100%;font-family:var(--sans);font-size:15px;padding:11px 12px;border:1px solid rgba(40,61,59,0.18);border-radius:12px;background:rgba(255,255,255,0.7);color:var(--ink);outline:none;}
+  input:focus,select:focus{border-color:var(--teal);}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 2px;}
+  .toggle-row .tl{font-size:13px;font-weight:600;color:var(--ink);}
+  .toggle-row .tl small{display:block;font-weight:400;color:rgba(40,61,59,0.55);font-size:11px;margin-top:1px;}
+  .switch{position:relative;width:48px;height:28px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;position:absolute;}
+  .switch .sl{position:absolute;inset:0;background:rgba(40,61,59,0.22);border-radius:999px;transition:.2s;}
+  .switch .sl:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+  .switch input:checked + .sl{background:var(--teal);}
+  .switch input:checked + .sl:before{transform:translateX(20px);}
+  .btn{display:block;width:100%;padding:13px;border:none;border-radius:14px;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-align:center;}
+  .btn-primary{background:var(--forest);color:var(--cream);}
+  .btn-terra{background:var(--terra);color:#fff;}
+  .btn-teal{background:var(--teal);color:#fff;}
+  .btn-ghost{background:rgba(40,61,59,0.08);color:var(--forest);}
+  .btn:active{opacity:.85;}
+  .expense{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;margin-bottom:8px;cursor:pointer;}
+  .expense .l .nm{font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:6px;}
+  .expense .l .sub{font-size:11px;color:rgba(40,61,59,0.55);margin-top:2px;}
+  .expense .r{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--terra);}
+  .share-pill{font-size:8px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;border-radius:999px;}
+  .share-pill.on{background:rgba(25,114,120,0.16);color:var(--teal);}
+  .share-pill.off{background:rgba(40,61,59,0.1);color:rgba(40,61,59,0.55);}
+  .empty{text-align:center;padding:34px 16px;color:rgba(40,61,59,0.5);font-family:var(--serif);font-style:italic;font-size:17px;}
+
+  .goal{padding:18px;margin-bottom:12px;}
+  .goal .gh{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .goal .gh .nm{font-family:var(--serif);font-style:italic;font-size:21px;color:var(--forest);line-height:1.1;}
+  .goal .badge{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--terra);color:#fff;white-space:nowrap;flex-shrink:0;}
+  .goal .nums{display:flex;align-items:baseline;gap:6px;margin-top:10px;}
+  .goal .nums .cur{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--ink);}
+  .goal .nums .tgt{font-size:12px;color:rgba(40,61,59,0.55);font-weight:600;}
+  .bar{height:9px;border-radius:999px;background:rgba(40,61,59,0.12);overflow:hidden;margin-top:10px;}
+  .bar > span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--forest));transition:width .5s ease;}
+  .goal .pct{font-size:11px;color:rgba(40,61,59,0.6);font-weight:700;margin-top:6px;}
+  .goal .gactions{display:flex;gap:8px;margin-top:13px;}
+  .goal .gactions button{flex:1;padding:10px;border:none;border-radius:11px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;}
+
+  .hist{padding:16px 18px;margin-bottom:10px;}
+  .hist .hc{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--forest);}
+  .hist .hrow{display:flex;justify-content:space-between;margin-top:8px;font-size:12.5px;color:rgba(40,61,59,0.75);}
+  .hist .hrow b{font-family:var(--serif);font-style:italic;color:var(--ink);font-weight:400;font-size:14px;}
+
+  .more-card{padding:6px;margin-bottom:12px;}
+  .more-row{display:flex;align-items:center;justify-content:space-between;padding:15px 14px;border-bottom:1px solid rgba(40,61,59,0.08);cursor:pointer;}
+  .more-row:last-child{border-bottom:none;}
+  .more-row .ml .t{font-size:14px;font-weight:600;color:var(--ink);}
+  .more-row .ml .d{font-size:11px;color:rgba(40,61,59,0.55);margin-top:2px;}
+  .more-row .chev{color:rgba(40,61,59,0.4);font-size:18px;}
+
+  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;max-width:520px;margin:0 auto;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:var(--glass-strong);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-top:1px solid var(--glass-border);}
+  nav.tabs button{flex:1;background:none;border:none;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  nav.tabs .ic{width:22px;height:22px;stroke:rgba(40,61,59,0.55);stroke-width:1.8;fill:none;}
+  nav.tabs .lb{font-size:10px;font-weight:600;color:rgba(40,61,59,0.55);letter-spacing:.3px;}
+  nav.tabs button.on .ic{stroke:var(--terra);}
+  nav.tabs button.on .lb{color:var(--terra);}
+
+  /* undo / redo floating */
+  .undobar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom));z-index:60;display:flex;gap:8px;}
+  .undobar button{width:46px;height:38px;border-radius:12px;border:1px solid var(--glass-border);background:var(--glass-strong);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:18px;color:var(--forest);cursor:pointer;box-shadow:var(--shadow);}
+  .undobar button:disabled{opacity:.35;}
+
+  .scrim{position:fixed;inset:0;z-index:100;background:rgba(10,10,10,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;}
+  .scrim.show{display:flex;}
+  .sheet{width:100%;max-width:520px;background:var(--cream);border-radius:24px 24px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom));box-shadow:var(--shadow-lg);animation:rise .25s ease;max-height:88vh;overflow-y:auto;}
+  @keyframes rise{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .sheet h3{font-family:var(--serif);font-style:italic;font-size:26px;color:var(--forest);margin-bottom:2px;}
+  .sheet .sub{font-size:13px;color:rgba(40,61,59,0.6);margin-bottom:18px;}
+  .footer{text-align:center;padding:24px 0 8px;font-size:10px;letter-spacing:2.5px;color:rgba(40,61,59,0.4);font-weight:600;}
+  .toast{position:fixed;left:50%;bottom:130px;transform:translateX(-50%);z-index:200;background:var(--forest);color:var(--cream);padding:12px 20px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+  .hidden{display:none!important;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">soummo<span class="semi">;</span><small id="brand-sub">money</small></div>
+    <div id="cycle-label">jun 2026<small>cycle</small></div>
+  </header>
+  <main id="screen"></main>
+  <div class="footer">SOUMMO · MONEY · V.13 · MMXXVI</div>
+</div>
+
+<div class="undobar" id="undobar">
+  <button id="undo-btn" title="Undo">&#8634;</button>
+  <button id="redo-btn" title="Redo">&#8635;</button>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button data-screen="home" class="on"><svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg><span class="lb">Home</span></button>
+  <button data-screen="daily"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M5 8l7-5 7 5M5 16l7 5 7-5"/></svg><span class="lb">Daily</span></button>
+  <button data-screen="goals"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg><span class="lb">Goals</span></button>
+  <button data-screen="history"><svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 4v4h4M12 7v5l3 2"/></svg><span class="lb">History</span></button>
+  <button data-screen="more"><svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><span class="lb">More</span></button>
+</nav>
+
+<div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const STORE_KEY = 'soummo_money_v12';   // kept for data continuity from V.12
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function defaultState(){
+  return {
+    version:'V.13', salaryAmount:234000, salaryDay:28, currentCycle:'Jun 2026',
+    accounts:{ brac:245000, ific:0, wallet:500 },
+    items:[
+      {id:'rent',name:'House Rent',amount:24200,account:'brac',status:'due',paid:0,win:[1,5],shared:true},
+      {id:'garage',name:'Garage',amount:2200,account:'brac',status:'due',paid:0,win:[1,5],shared:true},
+      {id:'electric',name:'Electricity',amount:4000,account:'brac',status:'paid',paid:4000,win:[1,10],shared:true},
+      {id:'gas',name:'Gas',amount:2290,account:'brac',status:'paid',paid:2290,win:[1,10],shared:true},
+      {id:'help',name:'Help',amount:7000,account:'brac',status:'paid',paid:7000,win:[1,7],shared:true},
+      {id:'grocery',name:'Grocery',amount:15000,account:'wallet',status:'paid',paid:15000,win:[1,30],shared:true},
+      {id:'education',name:'Education',amount:15000,account:'brac',status:'paid',paid:15000,win:[1,10],shared:true,advance:true,advanceNote:'10k advance toward July',advanceAmount:10000},
+      {id:'wifi',name:'WiFi',amount:1000,account:'brac',status:'paid',paid:1000,win:[1,10],shared:true,advance:true,advanceNote:'Paid till July',advanceCycles:1},
+      {id:'uncle',name:'Uncle',amount:22000,account:'brac',status:'paid',paid:22000,win:[1,10],shared:true},
+      {id:'itracker',name:'ITracker',amount:350,account:'brac',status:'paid',paid:350,win:[1,10],shared:true},
+      {id:'babies',name:'Babies',amount:2200,account:'wallet',status:'partial',paid:1100,win:[1,30],shared:true},
+      {id:'misc',name:'Misc',amount:8000,account:'wallet',status:'partial',paid:6200,win:[1,30],shared:true},
+      {id:'fuel',name:'Fuel',amount:8000,account:'brac',status:'partial',paid:6000,win:[1,30],shared:true},
+      {id:'dps',name:'DPS Personal',amount:10000,account:'brac',status:'due',paid:0,win:[15,20],shared:true},
+      {id:'dps-fridge',name:'DPS Fridge',amount:10000,account:'brac',status:'due',paid:0,win:[15,20],shared:true},
+      {id:'brac-emi',name:'BRAC EMI',amount:29000,account:'brac',status:'due',paid:0,win:[25,25],shared:true}
+    ],
+    goals:[
+      {id:'ebl',name:'EBL Loan Closure',target:255000,current:0,priority:true},
+      {id:'bracloan',name:'BRAC Loan Payoff',target:1276000,current:0,note:'monthly EMI handles'},
+      {id:'emergency',name:'Emergency Fund',target:500000,current:0},
+      {id:'fridge',name:'Fridge DPS',target:125000,current:0},
+      {id:'puja',name:'Durga Puja Fund',target:100000,current:0}
+    ],
+    dailyExpenses:[], history:[],
+    partner:{ name:'Partner', accounts:[] },
+    activeScreen:'home', dailyFilter:'cycle', viewMode:'me', notifiedToday:[]
+  };
+}
+
+/* ---------- persistence ---------- */
+let state;
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){ state = JSON.parse(raw); migrate(); }
+    else { state = defaultState(); saveState(); }
+  }catch(e){ state = defaultState(); }
+}
+function migrate(){
+  const d = defaultState();
+  for(const k in d){ if(!(k in state)) state[k] = d[k]; }
+  if(!state.accounts) state.accounts = d.accounts;
+  if(!state.partner) state.partner = d.partner;
+  if(!Array.isArray(state.partner.accounts)) state.partner.accounts = [];
+  if(!state.viewMode) state.viewMode = 'me';
+  if(!Array.isArray(state.notifiedToday)) state.notifiedToday = [];
+  // backfill shared flag on any older items
+  state.items.forEach(i=>{ if(typeof i.shared === 'undefined') i.shared = true; });
+  state.dailyExpenses.forEach(e=>{ if(typeof e.shared === 'undefined') e.shared = true; });
+}
+function saveState(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){ toast('Storage error'); } }
+
+/* ---------- undo / redo ---------- */
+let undoStack = [], redoStack = [];
+function snapshot(){ return JSON.parse(JSON.stringify(state)); }
+function mutate(label, fn){
+  undoStack.push(snapshot());
+  if(undoStack.length>40) undoStack.shift();
+  redoStack = [];
+  fn();
+  saveState(); render();
+  if(label) toast(label);
+}
+function undo(){
+  if(!undoStack.length) return;
+  redoStack.push(snapshot());
+  state = undoStack.pop();
+  saveState(); render(); toast('Undone');
+}
+function redo(){
+  if(!redoStack.length) return;
+  undoStack.push(snapshot());
+  state = redoStack.pop();
+  saveState(); render(); toast('Redone');
+}
+
+/* ---------- helpers / math ---------- */
+function fmt(n){ return '\u09F3' + Math.round(n).toLocaleString('en-IN'); }
+function totalCash(){ const a=state.accounts; return a.brac + a.ific + a.wallet; }
+function itemRemaining(i){
+  if(i.status==='paid' || i.advance) return 0;
+  if(i.status==='partial') return Math.max(0, i.amount - i.paid);
+  return i.amount;
+}
+function totalDue(){ return state.items.reduce((s,i)=> s + itemRemaining(i), 0); }
+function cashAfter(){ return totalCash() - totalDue(); }
+function totalPaidThisCycle(){
+  return state.items.reduce((s,i)=> s + (i.paid||0), 0) + state.dailyExpenses.reduce((s,e)=> s + e.amount, 0);
+}
+function displayStatus(i){ return i.advance ? 'advance' : i.status; }
+function acctLabel(k){ return {brac:'BRAC', ific:'IFIC', wallet:'Wallet'}[k] || k; }
+function todayDay(){ return new Date().getDate(); }
+function windowOpen(i){ if(!i.win) return false; const d=todayDay(); return d>=i.win[0] && d<=i.win[1]; }
+function winLabel(i){ return i.win ? (i.win[0]===i.win[1] ? String(i.win[0]) : i.win[0]+'\u2013'+i.win[1]) : '\u2014'; }
+
+/* priority-sorted action list */
+function actionItems(){
+  const d = todayDay();
+  return state.items.filter(i=> itemRemaining(i)>0).map(i=>{
+    const open = i.win && d>=i.win[0] && d<=i.win[1];
+    const overdue = i.win && d > i.win[1];
+    const daysUntil = i.win ? (i.win[0]-d) : 999;
+    let urgency = overdue ? 0 : open ? 1 : 2 + Math.max(0,daysUntil);
+    return {item:i, open, overdue, urgency, due:itemRemaining(i)};
+  }).sort((a,b)=> a.urgency-b.urgency || b.due-a.due);
+}
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 1900);
+}
+
+/* =========================================================
+   RENDER
+========================================================= */
+function render(){
+  const partner = state.viewMode==='partner';
+  document.body.classList.toggle('partner', partner);
+  document.getElementById('brand-sub').textContent = partner ? 'household' : 'money';
+  document.getElementById('cycle-label').innerHTML = state.currentCycle.toLowerCase() + '<small>'+(partner?'shared':'cycle')+'</small>';
+  document.querySelectorAll('#tabs button').forEach(b=> b.classList.toggle('on', b.dataset.screen===state.activeScreen));
+
+  const el = document.getElementById('screen');
+  if(partner){ el.innerHTML = renderPartner(); }
+  else{
+    const screens = {home:renderHome, daily:renderDaily, goals:renderGoals, history:renderHistory, more:renderMore};
+    el.innerHTML = (screens[state.activeScreen] || renderHome)();
+  }
+  wireScreen();
+  document.getElementById('undo-btn').disabled = undoStack.length===0;
+  document.getElementById('redo-btn').disabled = redoStack.length===0;
+}
+
+/* ---------- priority block (shared by home + partner) ---------- */
+function priorityHtml(){
+  const acts = actionItems();
+  if(!acts.length) return '';
+  const top = acts.slice(0,5);
+  return `
+    <section class="glass priority">
+      <div class="ph">Do now \u00b7 priority order</div>
+      ${top.map((a,idx)=>{
+        let urg = a.overdue?'<span class="urg over">Overdue</span>' : a.open?'<span class="urg now">Due now</span>' : '<span class="urg soon">Day '+a.item.win[0]+'</span>';
+        return `
+        <div class="prow" data-bill="${a.item.id}">
+          <span class="rank">${idx+1}</span>
+          <div class="pmid">
+            <div class="pn">${a.item.name}</div>
+            <div class="pd">${acctLabel(a.item.account)} \u00b7 window ${winLabel(a.item)}</div>
+          </div>
+          <span class="pamt">${fmt(a.due)}</span>
+          ${urg}
+        </div>`;
+      }).join('')}
+    </section>`;
+}
+
+/* ---------- HOME (me) ---------- */
+function renderHome(){
+  const after = cashAfter();
+  const a = state.accounts;
+  return `
+    <section class="glass hero">
+      <div class="label">Total Cash on Hand</div>
+      <div class="total">${fmt(totalCash())}</div>
+      <div class="after"><span class="k">After dues</span><span class="v ${after<0?'neg':''}">${fmt(after)}</span></div>
+    </section>
+    <div class="accounts">
+      ${['brac','ific','wallet'].map(k=>`
+        <div class="glass acct" data-acct="${k}"><span class="edit-hint">edit</span>
+          <div class="nm">${acctLabel(k)}</div><div class="amt ${a[k]===0?'zero':''}">${fmt(a[k])}</div>
+        </div>`).join('')}
+    </div>
+    ${dueAlertsHtml()}
+    ${priorityHtml()}
+    <div class="pull-quote">"Every taka has a job; or it drifts."</div>
+    <div class="sec-head"><h2>Bills</h2><span class="count">${state.items.filter(i=>itemRemaining(i)>0).length} due \u00b7 ${fmt(totalDue())}</span></div>
+    <div class="bills">
+      ${state.items.map(billCard).join('')}
+      <div class="add-tile" id="add-bill">+ Add bill</div>
+    </div>
+  `;
+}
+function billCard(i){
+  const st = displayStatus(i);
+  let tag, tagcls=st;
+  if(st==='paid') tag='Paid';
+  else if(st==='partial') tag=fmt(i.paid)+' / '+fmt(i.amount);
+  else if(st==='advance') tag='Advance';
+  else { if(windowOpen(i)){ tag='Due now'; tagcls='duesoon'; } else { tag='Due'; tagcls='due'; } }
+  return `
+    <div class="bill ${st}" data-bill="${i.id}">
+      <div class="stripe"></div>
+      <div class="nm">${i.name}${i.shared?'':'<span class="lock">\uD83D\uDD12</span>'}</div>
+      <div class="amt">${fmt(i.amount)}</div>
+      <div class="meta"><span class="win">${winLabel(i)}</span><span class="tag ${tagcls}">${tag}</span></div>
+      <div class="acctchip">${acctLabel(i.account)}${i.advance && i.advanceNote ? ' \u00b7 '+i.advanceNote : ''}</div>
+    </div>`;
+}
+function dueAlertsHtml(){
+  const open = state.items.filter(i=> itemRemaining(i)>0 && windowOpen(i));
+  if(!open.length) return '';
+  return open.map(i=>`
+    <div class="alert"><div class="dot"></div>
+      <div class="txt"><b>${i.name}</b> window is open (${winLabel(i)}) \u2014 ${fmt(itemRemaining(i))} due from ${acctLabel(i.account)}. Tap to confirm payment.</div>
+    </div>`).join('');
+}
+
+/* ---------- DAILY ---------- */
+function renderDaily(){
+  const f = state.dailyFilter, list = filteredDaily(), total = list.reduce((s,e)=>s+e.amount,0);
+  return `
+    <section class="glass daily-add">
+      <div class="row">
+        <div class="field"><label>Amount</label><input id="d-amt" type="number" inputmode="numeric" placeholder="0"></div>
+        <div class="field"><label>Account</label><select id="d-acct"><option value="brac">BRAC</option><option value="ific">IFIC</option><option value="wallet">Wallet</option></select></div>
+      </div>
+      <div class="field" style="margin-bottom:6px;"><label>Note</label><input id="d-note" type="text" placeholder="What was it for?"></div>
+      <div class="toggle-row"><div class="tl">Show to partner<small>Visible in the household view</small></div>
+        <label class="switch"><input type="checkbox" id="d-share" checked><span class="sl"></span></label></div>
+      <button class="btn btn-terra" id="d-add">Log expense</button>
+    </section>
+    <div class="filters">
+      <button data-f="week" class="${f==='week'?'on':''}">Week</button>
+      <button data-f="month" class="${f==='month'?'on':''}">Month</button>
+      <button data-f="cycle" class="${f==='cycle'?'on':''}">Cycle</button>
+    </div>
+    <div class="sec-head"><h2>Spent</h2><span class="count">${fmt(total)} \u00b7 ${list.length} item${list.length!==1?'s':''}</span></div>
+    ${ list.length ? list.map(e=>`
+      <div class="glass expense" data-exp="${e.id}">
+        <div class="l"><div class="nm">${e.note||'Expense'} <span class="share-pill ${e.shared?'on':'off'}">${e.shared?'shared':'private'}</span></div>
+          <div class="sub">${acctLabel(e.account)} \u00b7 ${new Date(e.at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} \u00b7 tap to edit</div></div>
+        <div class="r">\u2212${fmt(e.amount)}</div>
+      </div>`).join('') : `<div class="empty">No expenses logged here yet.</div>` }
+  `;
+}
+function filteredDaily(){
+  const now = Date.now(), day = 86400000;
+  return state.dailyExpenses.filter(e=>{
+    if(state.dailyFilter==='week') return now - new Date(e.at).getTime() <= 7*day;
+    if(state.dailyFilter==='month') return now - new Date(e.at).getTime() <= 30*day;
+    return e.cycle === state.currentCycle;
+  }).sort((a,b)=> new Date(b.at) - new Date(a.at));
+}
+
+/* ---------- GOALS ---------- */
+function renderGoals(){
+  return `
+    <div class="sec-head"><h2>Goals</h2><span class="count">${state.goals.length} tracked</span></div>
+    ${state.goals.map(g=>{
+      const pct = g.target>0 ? Math.min(100, Math.round(g.current/g.target*100)) : 0;
+      return `
+      <section class="glass goal" data-goal="${g.id}">
+        <div class="gh"><div class="nm">${g.name}</div>${g.priority?'<span class="badge">Priority</span>':''}</div>
+        <div class="nums"><span class="cur">${fmt(g.current)}</span><span class="tgt">of ${fmt(g.target)}${g.note?' \u00b7 '+g.note:''}</span></div>
+        <div class="bar"><span style="width:${pct}%"></span></div>
+        <div class="pct">${pct}% funded \u00b7 ${fmt(Math.max(0,g.target-g.current))} to go</div>
+        <div class="gactions">
+          <button class="btn-teal goal-add" data-goal="${g.id}" style="color:#fff;">Add funds</button>
+          <button class="btn-ghost goal-sub" data-goal="${g.id}">Withdraw</button>
+          <button class="btn-ghost goal-edit" data-goal="${g.id}">Edit</button>
+        </div>
+      </section>`;
+    }).join('')}
+    <div class="add-tile" id="add-goal" style="min-height:60px;">+ Add goal</div>
+  `;
+}
+
+/* ---------- HISTORY ---------- */
+function renderHistory(){
+  if(!state.history.length) return `<div class="sec-head"><h2>History</h2></div><div class="empty">No archived cycles yet.<br>Roll over a cycle to start your ledger.</div>`;
+  return `
+    <div class="sec-head"><h2>History</h2><span class="count">${state.history.length} cycle${state.history.length!==1?'s':''}</span></div>
+    ${state.history.slice().reverse().map(h=>`
+      <section class="glass hist"><div class="hc">${h.cycle}</div>
+        <div class="hrow"><span>Cash at start</span><b>${fmt(h.cashStart)}</b></div>
+        <div class="hrow"><span>Salary added</span><b>${fmt(h.salaryAdded)}</b></div>
+        <div class="hrow"><span>Total spent</span><b>${fmt(h.totalSpent)}</b></div>
+        <div class="hrow"><span>Items settled</span><b>${h.itemsPaid}</b></div>
+      </section>`).join('')}
+  `;
+}
+
+/* ---------- MORE ---------- */
+function renderMore(){
+  return `
+    <div class="sec-head"><h2>More</h2></div>
+    <section class="glass more-card">
+      <div class="more-row" data-act="partner"><div class="ml"><div class="t">Partner view</div><div class="d">See the household view your partner gets</div></div><span class="chev">\u203a</span></div>
+      <div class="more-row" data-act="notify"><div class="ml"><div class="t">Enable notifications</div><div class="d">Priority alerts when a bill is due</div></div><span class="chev">\u203a</span></div>
+    </section>
+    <section class="glass more-card">
+      <div class="more-row" data-act="backup"><div class="ml"><div class="t">Backup data</div><div class="d">Download a JSON snapshot</div></div><span class="chev">\u203a</span></div>
+      <div class="more-row" data-act="restore"><div class="ml"><div class="t">Restore data</div><div class="d">Load from a JSON file</div></div><span class="chev">\u203a</span></div>
+      <div class="more-row" data-act="csv"><div class="ml"><div class="t">Export CSV</div><div class="d">Bills + daily as spreadsheet</div></div><span class="chev">\u203a</span></div>
+    </section>
+    <section class="glass more-card">
+      <div class="more-row" data-act="archive"><div class="ml"><div class="t">Archive cycle</div><div class="d">Save current cycle to history (no reset)</div></div><span class="chev">\u203a</span></div>
+      <div class="more-row" data-act="rollover"><div class="ml"><div class="t">Roll over to next cycle</div><div class="d">Add salary, reset bills, advance month</div></div><span class="chev">\u203a</span></div>
+      <div class="more-row" data-act="reset"><div class="ml"><div class="t" style="color:var(--terra)">Reset everything</div><div class="d">Wipe all data, start fresh</div></div><span class="chev">\u203a</span></div>
+    </section>
+  `;
+}
+
+/* ---------- PARTNER VIEW ---------- */
+function renderPartner(){
+  const shared = state.items.filter(i=> i.shared);
+  const sharedDue = shared.reduce((s,i)=> s+itemRemaining(i), 0);
+  const herTotal = state.partner.accounts.reduce((s,a)=> s+(a.balance||0), 0);
+  const sharedDaily = state.dailyExpenses.filter(e=> e.shared && e.cycle===state.currentCycle);
+  // priority among shared only
+  const d = todayDay();
+  const acts = shared.filter(i=>itemRemaining(i)>0).map(i=>{
+    const open=i.win&&d>=i.win[0]&&d<=i.win[1], over=i.win&&d>i.win[1];
+    return {item:i,open,over,urg:over?0:open?1:2+Math.max(0,(i.win?i.win[0]-d:999)),due:itemRemaining(i)};
+  }).sort((a,b)=>a.urg-b.urg||b.due-a.due).slice(0,5);
+
+  return `
+    <div class="partner-banner"><div class="pb-dot"></div><div class="pb-txt">Partner view \u00b7 ${state.partner.name||'Partner'} <span>\u2014 household items only, no personal goals or balances</span></div></div>
+    <section class="glass hero">
+      <div class="label">${state.partner.name||'Partner'} \u00b7 Your accounts</div>
+      <div class="total">${fmt(herTotal)}</div>
+      <div class="after"><span class="k">Household still due</span><span class="v ${sharedDue>0?'neg':''}">${fmt(sharedDue)}</span></div>
+    </section>
+    <div class="accounts">
+      ${state.partner.accounts.map(a=>`
+        <div class="glass acct" data-pacct="${a.id}"><span class="edit-hint">edit</span>
+          <div class="nm">${a.name}</div><div class="amt ${a.balance===0?'zero':''}">${fmt(a.balance)}</div></div>`).join('')}
+      <div class="add-tile" id="add-pacct" style="min-height:70px;">+ Account</div>
+    </div>
+    ${ acts.length ? `
+    <section class="glass priority">
+      <div class="ph">Household \u2014 do now</div>
+      ${acts.map((a,idx)=>{
+        let urg = a.over?'<span class="urg over">Overdue</span>':a.open?'<span class="urg now">Due now</span>':'<span class="urg soon">Day '+a.item.win[0]+'</span>';
+        return `<div class="prow"><span class="rank">${idx+1}</span><div class="pmid"><div class="pn">${a.item.name}</div><div class="pd">window ${winLabel(a.item)}</div></div><span class="pamt">${fmt(a.due)}</span>${urg}</div>`;
+      }).join('')}
+    </section>` : '' }
+    <div class="sec-head"><h2>Household bills</h2><span class="count">${shared.length} shared</span></div>
+    <div class="bills">${shared.map(i=>{
+      const st=displayStatus(i); let tag,tc=st;
+      if(st==='paid')tag='Paid';else if(st==='partial')tag=fmt(i.paid)+' / '+fmt(i.amount);else if(st==='advance')tag='Advance';else{if(windowOpen(i)){tag='Due now';tc='duesoon';}else{tag='Due';tc='due';}}
+      return `<div class="bill ${st}"><div class="stripe"></div><div class="nm">${i.name}</div><div class="amt">${fmt(i.amount)}</div><div class="meta"><span class="win">${winLabel(i)}</span><span class="tag ${tc}">${tag}</span></div></div>`;
+    }).join('')}</div>
+    ${ sharedDaily.length ? `<div class="sec-head"><h2>Shared spending</h2><span class="count">${fmt(sharedDaily.reduce((s,e)=>s+e.amount,0))}</span></div>
+      ${sharedDaily.map(e=>`<div class="glass expense"><div class="l"><div class="nm">${e.note||'Expense'}</div><div class="sub">${new Date(e.at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div><div class="r">\u2212${fmt(e.amount)}</div></div>`).join('')}` : '' }
+    <div style="height:10px"></div>
+    <button class="btn btn-ghost" id="exit-partner">\u2190 Back to my view</button>
+  `;
+}
+
+/* =========================================================
+   WIRING
+========================================================= */
+function wireScreen(){
+  document.querySelectorAll('.acct[data-acct]').forEach(el=> el.addEventListener('click', ()=> openAccountSheet(el.dataset.acct)));
+  document.querySelectorAll('.bill[data-bill]').forEach(el=> el.addEventListener('click', ()=> openPaySheet(el.dataset.bill)));
+  document.querySelectorAll('.prow[data-bill]').forEach(el=> el.addEventListener('click', ()=> openPaySheet(el.dataset.bill)));
+  const ab = document.getElementById('add-bill'); if(ab) ab.addEventListener('click', openAddBillSheet);
+  const add = document.getElementById('d-add'); if(add) add.addEventListener('click', addDaily);
+  document.querySelectorAll('.filters button').forEach(b=> b.addEventListener('click', ()=>{ state.dailyFilter=b.dataset.f; render(); }));
+  document.querySelectorAll('.expense[data-exp]').forEach(el=> el.addEventListener('click', ()=> openEditExpense(el.dataset.exp)));
+  document.querySelectorAll('.goal-add').forEach(b=> b.addEventListener('click', ()=> openGoalSheet(b.dataset.goal,'add')));
+  document.querySelectorAll('.goal-sub').forEach(b=> b.addEventListener('click', ()=> openGoalSheet(b.dataset.goal,'sub')));
+  document.querySelectorAll('.goal-edit').forEach(b=> b.addEventListener('click', ()=> openEditGoalSheet(b.dataset.goal)));
+  const ag = document.getElementById('add-goal'); if(ag) ag.addEventListener('click', openAddGoalSheet);
+  document.querySelectorAll('.more-row').forEach(r=> r.addEventListener('click', ()=> moreAction(r.dataset.act)));
+  // partner view
+  const ep = document.getElementById('exit-partner'); if(ep) ep.addEventListener('click', ()=>{ state.viewMode='me'; render(); });
+  const apa = document.getElementById('add-pacct'); if(apa) apa.addEventListener('click', ()=> openPartnerAccountSheet(null));
+  document.querySelectorAll('.acct[data-pacct]').forEach(el=> el.addEventListener('click', ()=> openPartnerAccountSheet(el.dataset.pacct)));
+}
+
+/* ---------- pay sheet (with edit-paid + edit-details) ---------- */
+function openPaySheet(id){
+  const i = state.items.find(x=>x.id===id); if(!i) return;
+  const remaining = itemRemaining(i);
+  openSheet(`
+    <h3>${i.name}</h3>
+    <div class="sub">${fmt(i.amount)} \u00b7 ${acctLabel(i.account)} \u00b7 window ${winLabel(i)}${i.advanceNote?' \u00b7 '+i.advanceNote:''}</div>
+    ${ remaining>0 ? `
+      <button class="btn btn-teal" id="pay-full">Pay full (${fmt(remaining)})</button>
+      <div style="height:9px"></div>
+      <div style="display:flex;gap:9px;align-items:flex-end;">
+        <div class="field"><label>Partial amount</label><input id="pay-amt" type="number" inputmode="numeric" placeholder="0"></div>
+        <button class="btn btn-terra" id="pay-part" style="width:auto;padding:13px 18px;">Pay</button>
+      </div>` : `<div class="sub" style="margin-bottom:12px;">Settled this cycle.${i.advance?' Marked advance-paid.':''}</div>` }
+    <div style="height:14px"></div>
+    <div class="field"><label>Set paid amount exactly</label><input id="pay-exact" type="number" inputmode="numeric" value="${i.paid}"></div>
+    <div style="height:8px"></div>
+    <button class="btn btn-primary" id="pay-setexact">Save paid amount</button>
+    <div style="height:8px"></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" id="bill-edit" style="flex:1;">Edit bill</button>
+      ${ i.paid>0 ? `<button class="btn btn-ghost" id="pay-refund" style="flex:1;">Reverse (refund ${fmt(i.paid)})</button>` : '' }
+    </div>
+  `);
+  const full=document.getElementById('pay-full'); if(full) full.addEventListener('click', ()=> applyPayment(id, remaining));
+  const part=document.getElementById('pay-part'); if(part) part.addEventListener('click', ()=>{
+    const v=parseFloat(document.getElementById('pay-amt').value); if(!v||v<=0) return toast('Enter an amount'); applyPayment(id, Math.min(v,remaining));
+  });
+  document.getElementById('pay-setexact').addEventListener('click', ()=>{
+    const v=parseFloat(document.getElementById('pay-exact').value); if(isNaN(v)||v<0) return toast('Enter a valid amount'); setPaidExact(id, v);
+  });
+  document.getElementById('bill-edit').addEventListener('click', ()=> openEditBillSheet(id));
+  const rf=document.getElementById('pay-refund'); if(rf) rf.addEventListener('click', ()=> refundPayment(id));
+}
+
+function applyPayment(id, amt){
+  const i = state.items.find(x=>x.id===id); if(!i||amt<=0) return;
+  if(state.accounts[i.account] < amt && !confirm(`${acctLabel(i.account)} only has ${fmt(state.accounts[i.account])}. Pay anyway (goes negative)?`)) return;
+  closeSheet();
+  mutate(`Paid ${fmt(amt)} \u00b7 ${i.name}`, ()=>{
+    state.accounts[i.account] -= amt; i.paid += amt;
+    i.status = i.paid >= i.amount ? 'paid' : 'partial';
+  });
+}
+function setPaidExact(id, newPaid){
+  const i = state.items.find(x=>x.id===id); if(!i) return;
+  newPaid = Math.min(newPaid, i.amount);
+  const delta = newPaid - i.paid;
+  if(delta>0 && state.accounts[i.account] < delta && !confirm(`${acctLabel(i.account)} only has ${fmt(state.accounts[i.account])}. Continue?`)) return;
+  closeSheet();
+  mutate(`Updated ${i.name}`, ()=>{
+    state.accounts[i.account] -= delta;   // delta>0 money leaves, delta<0 returns
+    i.paid = newPaid;
+    i.status = newPaid >= i.amount ? 'paid' : newPaid>0 ? 'partial' : 'due';
+    if(newPaid < i.amount) i.advance = false;
+  });
+}
+function refundPayment(id){
+  const i = state.items.find(x=>x.id===id); if(!i||i.paid<=0) return;
+  if(!confirm(`Reverse ${fmt(i.paid)} on ${i.name}? It returns to ${acctLabel(i.account)} and the bill goes back to due.`)) return;
+  closeSheet();
+  mutate(`Reversed \u00b7 ${i.name}`, ()=>{
+    state.accounts[i.account] += i.paid; i.paid=0; i.status='due'; i.advance=false;
+  });
+}
+
+/* ---------- edit / add bill ---------- */
+function openEditBillSheet(id){
+  const i = state.items.find(x=>x.id===id); if(!i) return;
+  openSheet(billForm('Edit bill', i));
+  wireBillForm(()=>{
+    const vals = readBillForm(); if(!vals) return;
+    closeSheet();
+    mutate(`Saved ${vals.name}`, ()=>{
+      i.name=vals.name; i.amount=vals.amount; i.account=vals.account; i.win=vals.win; i.shared=vals.shared;
+      if(i.paid>i.amount){ const back=i.paid-i.amount; state.accounts[i.account]+=back; i.paid=i.amount; }
+      i.status = i.paid>=i.amount ? 'paid' : i.paid>0 ? 'partial' : 'due';
+    });
+  }, ()=>{ // delete
+    if(!confirm(`Delete "${i.name}"? Any paid amount (${fmt(i.paid)}) returns to ${acctLabel(i.account)}.`)) return;
+    closeSheet();
+    mutate(`Deleted ${i.name}`, ()=>{
+      if(i.paid>0) state.accounts[i.account]+=i.paid;
+      state.items = state.items.filter(x=>x.id!==id);
+    });
+  });
+}
+function openAddBillSheet(){
+  openSheet(billForm('Add bill', {name:'',amount:0,account:'brac',win:[1,5],shared:true,paid:0}));
+  wireBillForm(()=>{
+    const vals = readBillForm(); if(!vals) return;
+    closeSheet();
+    mutate(`Added ${vals.name}`, ()=>{
+      state.items.push({id:'b-'+Date.now(),name:vals.name,amount:vals.amount,account:vals.account,status:'due',paid:0,win:vals.win,shared:vals.shared});
+    });
+  }, null);
+}
+function billForm(title, i){
+  return `
+    <h3>${title}</h3><div class="sub">Set the amount, account, due-date window and sharing.</div>
+    <div class="field" style="margin-bottom:10px;"><label>Name</label><input id="bf-name" type="text" value="${i.name||''}" placeholder="e.g. House Rent"></div>
+    <div style="display:flex;gap:9px;margin-bottom:10px;">
+      <div class="field"><label>Amount</label><input id="bf-amt" type="number" inputmode="numeric" value="${i.amount||''}"></div>
+      <div class="field"><label>Account</label><select id="bf-acct">
+        <option value="brac" ${i.account==='brac'?'selected':''}>BRAC</option>
+        <option value="ific" ${i.account==='ific'?'selected':''}>IFIC</option>
+        <option value="wallet" ${i.account==='wallet'?'selected':''}>Wallet</option></select></div>
+    </div>
+    <div style="display:flex;gap:9px;margin-bottom:6px;">
+      <div class="field"><label>Due from (day)</label><input id="bf-from" type="number" inputmode="numeric" min="1" max="31" value="${i.win?i.win[0]:1}"></div>
+      <div class="field"><label>Due to (day)</label><input id="bf-to" type="number" inputmode="numeric" min="1" max="31" value="${i.win?i.win[1]:5}"></div>
+    </div>
+    <div class="toggle-row"><div class="tl">Show to partner<small>Appears in the household view</small></div>
+      <label class="switch"><input type="checkbox" id="bf-share" ${i.shared?'checked':''}><span class="sl"></span></label></div>
+    <button class="btn btn-primary" id="bf-save">Save</button>
+    ${ title==='Edit bill' ? '<div style="height:8px"></div><button class="btn btn-ghost" id="bf-delete" style="color:var(--terra)">Delete bill</button>' : '' }
+  `;
+}
+function readBillForm(){
+  const name=document.getElementById('bf-name').value.trim();
+  const amount=parseFloat(document.getElementById('bf-amt').value);
+  const account=document.getElementById('bf-acct').value;
+  let from=parseInt(document.getElementById('bf-from').value), to=parseInt(document.getElementById('bf-to').value);
+  const shared=document.getElementById('bf-share').checked;
+  if(!name) { toast('Enter a name'); return null; }
+  if(!amount||amount<=0){ toast('Enter an amount'); return null; }
+  if(isNaN(from)) from=1; if(isNaN(to)) to=from; if(to<from) to=from;
+  return {name,amount,account,win:[from,to],shared};
+}
+function wireBillForm(onSave, onDelete){
+  document.getElementById('bf-save').addEventListener('click', onSave);
+  const del=document.getElementById('bf-delete'); if(del && onDelete) del.addEventListener('click', onDelete);
+}
+
+/* ---------- account edit ---------- */
+function openAccountSheet(key){
+  openSheet(`
+    <h3>${acctLabel(key)}</h3><div class="sub">Set the current balance to correct or sync. Daily activity updates it automatically.</div>
+    <div class="field" style="margin-bottom:16px;"><label>Balance</label><input id="acc-val" type="number" inputmode="numeric" value="${state.accounts[key]}"></div>
+    <button class="btn btn-primary" id="acc-save">Save balance</button>`);
+  document.getElementById('acc-save').addEventListener('click', ()=>{
+    const v=parseFloat(document.getElementById('acc-val').value); if(isNaN(v)) return toast('Enter a number');
+    closeSheet(); mutate(`${acctLabel(key)} updated`, ()=>{ state.accounts[key]=v; });
+  });
+}
+
+/* ---------- daily ---------- */
+function addDaily(){
+  const amt=parseFloat(document.getElementById('d-amt').value);
+  const acct=document.getElementById('d-acct').value;
+  const note=document.getElementById('d-note').value.trim();
+  const shared=document.getElementById('d-share').checked;
+  if(!amt||amt<=0) return toast('Enter an amount');
+  if(state.accounts[acct] < amt && !confirm(`${acctLabel(acct)} only has ${fmt(state.accounts[acct])}. Log anyway?`)) return;
+  mutate(`Logged ${fmt(amt)}`, ()=>{
+    state.accounts[acct]-=amt;
+    state.dailyExpenses.push({id:'e-'+Date.now(),amount:amt,account:acct,note:note,shared:shared,at:new Date().toISOString(),cycle:state.currentCycle});
+  });
+}
+function openEditExpense(id){
+  const e = state.dailyExpenses.find(x=>x.id===id); if(!e) return;
+  openSheet(`
+    <h3>Edit expense</h3><div class="sub">Editing returns the old amount and re-applies the new one.</div>
+    <div style="display:flex;gap:9px;margin-bottom:10px;">
+      <div class="field"><label>Amount</label><input id="ex-amt" type="number" inputmode="numeric" value="${e.amount}"></div>
+      <div class="field"><label>Account</label><select id="ex-acct">
+        <option value="brac" ${e.account==='brac'?'selected':''}>BRAC</option>
+        <option value="ific" ${e.account==='ific'?'selected':''}>IFIC</option>
+        <option value="wallet" ${e.account==='wallet'?'selected':''}>Wallet</option></select></div>
+    </div>
+    <div class="field" style="margin-bottom:6px;"><label>Note</label><input id="ex-note" type="text" value="${(e.note||'').replace(/"/g,'&quot;')}"></div>
+    <div class="toggle-row"><div class="tl">Show to partner</div><label class="switch"><input type="checkbox" id="ex-share" ${e.shared?'checked':''}><span class="sl"></span></label></div>
+    <button class="btn btn-primary" id="ex-save">Save changes</button>
+    <div style="height:8px"></div><button class="btn btn-ghost" id="ex-del" style="color:var(--terra)">Delete expense</button>
+  `);
+  document.getElementById('ex-save').addEventListener('click', ()=>{
+    const amt=parseFloat(document.getElementById('ex-amt').value);
+    const acct=document.getElementById('ex-acct').value;
+    const note=document.getElementById('ex-note').value.trim();
+    const shared=document.getElementById('ex-share').checked;
+    if(!amt||amt<=0) return toast('Enter an amount');
+    closeSheet();
+    mutate('Expense updated', ()=>{
+      state.accounts[e.account]+=e.amount;       // reverse old
+      state.accounts[acct]-=amt;                 // apply new
+      e.amount=amt; e.account=acct; e.note=note; e.shared=shared;
+    });
+  });
+  document.getElementById('ex-del').addEventListener('click', ()=>{
+    if(!confirm(`Delete "${e.note||'Expense'}" (${fmt(e.amount)})? It returns to ${acctLabel(e.account)}.`)) return;
+    closeSheet();
+    mutate('Expense removed', ()=>{
+      state.accounts[e.account]+=e.amount;
+      state.dailyExpenses = state.dailyExpenses.filter(x=>x.id!==id);
+    });
+  });
+}
+
+/* ---------- goals ---------- */
+function openGoalSheet(id, mode){
+  const g = state.goals.find(x=>x.id===id); if(!g) return;
+  const adding = mode==='add';
+  openSheet(`
+    <h3>${g.name}</h3><div class="sub">${adding?'Move money into this goal':'Pull money back out'} \u00b7 now at ${fmt(g.current)}</div>
+    <div class="field"><label>Amount</label><input id="g-amt" type="number" inputmode="numeric" placeholder="0"></div>
+    <div style="height:11px"></div>
+    <div class="field" style="margin-bottom:16px;"><label>${adding?'From account':'Back to account'}</label>
+      <select id="g-acct"><option value="brac">BRAC</option><option value="ific">IFIC</option><option value="wallet">Wallet</option></select></div>
+    <button class="btn ${adding?'btn-teal':'btn-ghost'}" id="g-go" ${adding?'style="color:#fff"':''}>${adding?'Add to goal':'Withdraw'}</button>`);
+  document.getElementById('g-go').addEventListener('click', ()=>{
+    const v=parseFloat(document.getElementById('g-amt').value); const acct=document.getElementById('g-acct').value;
+    if(!v||v<=0) return toast('Enter an amount');
+    if(adding && state.accounts[acct]<v && !confirm(`${acctLabel(acct)} only has ${fmt(state.accounts[acct])}. Continue?`)) return;
+    closeSheet();
+    if(adding) mutate(`Added ${fmt(v)} to ${g.name}`, ()=>{ state.accounts[acct]-=v; g.current+=v; });
+    else { const take=Math.min(v,g.current); mutate(`Withdrew ${fmt(take)}`, ()=>{ g.current-=take; state.accounts[acct]+=take; }); }
+  });
+}
+function openEditGoalSheet(id){
+  const g = state.goals.find(x=>x.id===id); if(!g) return;
+  openSheet(`
+    <h3>Edit goal</h3><div class="sub">Rename, retarget, or set priority.</div>
+    <div class="field" style="margin-bottom:10px;"><label>Name</label><input id="go-name" type="text" value="${g.name.replace(/"/g,'&quot;')}"></div>
+    <div class="field" style="margin-bottom:10px;"><label>Target</label><input id="go-tgt" type="number" inputmode="numeric" value="${g.target}"></div>
+    <div class="toggle-row"><div class="tl">Priority<small>Shows the priority badge</small></div><label class="switch"><input type="checkbox" id="go-pri" ${g.priority?'checked':''}><span class="sl"></span></label></div>
+    <button class="btn btn-primary" id="go-save">Save</button>
+    <div style="height:8px"></div><button class="btn btn-ghost" id="go-del" style="color:var(--terra)">Delete goal</button>`);
+  document.getElementById('go-save').addEventListener('click', ()=>{
+    const name=document.getElementById('go-name').value.trim();
+    const tgt=parseFloat(document.getElementById('go-tgt').value);
+    const pri=document.getElementById('go-pri').checked;
+    if(!name) return toast('Enter a name'); if(!tgt||tgt<=0) return toast('Enter a target');
+    closeSheet(); mutate('Goal saved', ()=>{ g.name=name; g.target=tgt; g.priority=pri; });
+  });
+  document.getElementById('go-del').addEventListener('click', ()=>{
+    if(!confirm(`Delete "${g.name}"? Funds saved (${fmt(g.current)}) are NOT returned automatically.`)) return;
+    closeSheet(); mutate('Goal deleted', ()=>{ state.goals=state.goals.filter(x=>x.id!==id); });
+  });
+}
+function openAddGoalSheet(){
+  openSheet(`
+    <h3>Add goal</h3><div class="sub">A savings target to fund from your accounts.</div>
+    <div class="field" style="margin-bottom:10px;"><label>Name</label><input id="ng-name" type="text" placeholder="e.g. Vacation Fund"></div>
+    <div class="field" style="margin-bottom:10px;"><label>Target</label><input id="ng-tgt" type="number" inputmode="numeric" placeholder="0"></div>
+    <div class="toggle-row"><div class="tl">Priority</div><label class="switch"><input type="checkbox" id="ng-pri"><span class="sl"></span></label></div>
+    <button class="btn btn-primary" id="ng-save">Add goal</button>`);
+  document.getElementById('ng-save').addEventListener('click', ()=>{
+    const name=document.getElementById('ng-name').value.trim();
+    const tgt=parseFloat(document.getElementById('ng-tgt').value);
+    const pri=document.getElementById('ng-pri').checked;
+    if(!name) return toast('Enter a name'); if(!tgt||tgt<=0) return toast('Enter a target');
+    closeSheet(); mutate(`Added ${name}`, ()=>{ state.goals.push({id:'g-'+Date.now(),name,target:tgt,current:0,priority:pri}); });
+  });
+}
+
+/* ---------- partner accounts ---------- */
+function openPartnerAccountSheet(id){
+  const existing = id ? state.partner.accounts.find(a=>a.id===id) : null;
+  openSheet(`
+    <h3>${existing?'Edit account':'Add account'}</h3><div class="sub">Your own bank or wallet \u2014 only you (partner) see this.</div>
+    <div class="field" style="margin-bottom:10px;"><label>Name</label><input id="pa-name" type="text" value="${existing?existing.name.replace(/"/g,'&quot;'):''}" placeholder="e.g. City Bank"></div>
+    <div class="field" style="margin-bottom:16px;"><label>Balance</label><input id="pa-bal" type="number" inputmode="numeric" value="${existing?existing.balance:''}" placeholder="0"></div>
+    <button class="btn btn-primary" id="pa-save">Save</button>
+    ${ existing ? '<div style="height:8px"></div><button class="btn btn-ghost" id="pa-del" style="color:var(--terra)">Delete account</button>' : '' }
+  `);
+  document.getElementById('pa-save').addEventListener('click', ()=>{
+    const name=document.getElementById('pa-name').value.trim();
+    const bal=parseFloat(document.getElementById('pa-bal').value)||0;
+    if(!name) return toast('Enter a name');
+    closeSheet();
+    mutate('Saved', ()=>{
+      if(existing){ existing.name=name; existing.balance=bal; }
+      else state.partner.accounts.push({id:'pa-'+Date.now(),name,balance:bal});
+    });
+  });
+  const del=document.getElementById('pa-del'); if(del) del.addEventListener('click', ()=>{
+    closeSheet(); mutate('Account removed', ()=>{ state.partner.accounts=state.partner.accounts.filter(a=>a.id!==id); });
+  });
+}
+
+/* ---------- sheet helpers ---------- */
+function openSheet(html){ document.getElementById('sheet').innerHTML=html; document.getElementById('scrim').classList.add('show'); }
+function closeSheet(){ document.getElementById('scrim').classList.remove('show'); }
+document.getElementById('scrim').addEventListener('click', e=>{ if(e.target.id==='scrim') closeSheet(); });
+
+/* ---------- MORE actions ---------- */
+function moreAction(act){
+  if(act==='partner'){ state.viewMode='partner'; state.activeScreen='home'; render(); }
+  else if(act==='backup') doBackup();
+  else if(act==='restore') doRestore();
+  else if(act==='csv') doCSV();
+  else if(act==='archive') doArchive();
+  else if(act==='rollover') doRollover();
+  else if(act==='notify') enableNotifications();
+  else if(act==='reset') doReset();
+}
+function doBackup(){ downloadBlob(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}), `soummo-money-${state.currentCycle.replace(' ','-')}.json`); toast('Backup downloaded'); }
+function doRestore(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json,.json';
+  inp.onchange=()=>{ const f=inp.files[0]; if(!f) return; const r=new FileReader();
+    r.onload=()=>{ try{ const data=JSON.parse(r.result); if(!data.accounts||!data.items) throw 0; undoStack.push(snapshot()); state=data; migrate(); saveState(); render(); toast('Data restored'); }catch(e){ toast('Invalid backup file'); } };
+    r.readAsText(f); };
+  inp.click();
+}
+function doCSV(){
+  let rows=[['Type','Name','Amount','Paid','Account','Status','Shared','Cycle']];
+  state.items.forEach(i=> rows.push(['Bill',i.name,i.amount,i.paid,acctLabel(i.account),displayStatus(i),i.shared?'yes':'no',state.currentCycle]));
+  state.dailyExpenses.forEach(e=> rows.push(['Daily',e.note||'Expense',e.amount,e.amount,acctLabel(e.account),'spent',e.shared?'yes':'no',e.cycle]));
+  const csv=rows.map(r=> r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadBlob(new Blob([csv],{type:'text/csv'}), `soummo-money-${state.currentCycle.replace(' ','-')}.csv`); toast('CSV exported');
+}
+function downloadBlob(blob,name){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); }
+function snapshotHistory(salaryAdded){
+  const spent=totalPaidThisCycle();
+  const itemsPaid=state.items.filter(i=> i.status==='paid'||i.status==='partial'||i.advance).length;
+  state.history.push({id:'h-'+Date.now(),cycle:state.currentCycle,cashStart:totalCash()+spent-salaryAdded,salaryAdded,totalSpent:spent,itemsPaid,archivedAt:new Date().toISOString()});
+}
+function doArchive(){ if(!confirm(`Archive ${state.currentCycle} to history? Saves a snapshot, no reset.`)) return; mutate('Cycle archived', ()=> snapshotHistory(0)); }
+function doRollover(){
+  if(!confirm(`Roll over to next cycle?\n\n\u2022 Save ${state.currentCycle} to history\n\u2022 Add salary ${fmt(state.salaryAmount)} to BRAC\n\u2022 Reset bills (advance-paid stays covered)\n\u2022 Advance the month`)) return;
+  mutate(`Rolled into next cycle`, ()=>{
+    snapshotHistory(state.salaryAmount);
+    state.accounts.brac += state.salaryAmount;
+    state.items.forEach(i=>{
+      if(i.amount<=0) return;
+      if(i.advanceCycles && i.advanceCycles>0){ i.advanceCycles-=1; i.status='paid'; i.paid=i.amount; i.advance=i.advanceCycles>0; if(!i.advance) i.advanceNote=''; }
+      else if(i.advanceAmount && i.advanceAmount>0){ i.paid=Math.min(i.advanceAmount,i.amount); i.status=i.paid>=i.amount?'paid':'partial'; i.advance=false; i.advanceNote=''; i.advanceAmount=0; }
+      else { i.status='due'; i.paid=0; i.advance=false; i.advanceNote=''; }
+    });
+    state.dailyExpenses=[]; state.notifiedToday=[];
+    const p=state.currentCycle.split(' '); let mi=MONTHS.indexOf(p[0]); let yr=parseInt(p[1]); mi=(mi+1)%12; if(mi===0) yr++;
+    state.currentCycle=MONTHS[mi]+' '+yr;
+  });
+}
+function doReset(){
+  if(!confirm('Reset EVERYTHING to June 2026 defaults? This cannot be undone.')) return;
+  if(!confirm('Absolutely sure? All accounts, bills, goals, partner data and history wiped.')) return;
+  undoStack=[]; redoStack=[]; state=defaultState(); saveState(); render(); toast('Reset to defaults');
+}
+
+/* ---------- notifications (priority order) ---------- */
+function enableNotifications(){
+  if(!('Notification' in window)) return toast('Not supported on this device');
+  Notification.requestPermission().then(p=>{ if(p==='granted'){ checkDueAlerts(true); toast('Notifications on'); } else toast('Permission denied'); });
+}
+function checkDueAlerts(force){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const acts = actionItems().filter(a=> a.open || a.overdue);   // priority-ordered, urgent only
+  acts.forEach(a=>{
+    const i=a.item, key=state.currentCycle+'|'+i.id+'|'+todayDay();
+    if(force || !state.notifiedToday.includes(key)){
+      try{ new Notification('soummo; money', { body:`${i.name} \u2014 ${fmt(a.due)} due from ${acctLabel(i.account)}${a.overdue?' (overdue)':''}.` }); }catch(e){}
+      if(!state.notifiedToday.includes(key)) state.notifiedToday.push(key);
+    }
+  });
+  saveState();
+}
+
+/* ---------- tabs + undo/redo buttons ---------- */
+document.querySelectorAll('#tabs button').forEach(b=> b.addEventListener('click', ()=>{
+  state.viewMode='me'; state.activeScreen=b.dataset.screen; closeSheet(); render(); window.scrollTo({top:0,behavior:'smooth'});
+}));
+document.getElementById('undo-btn').addEventListener('click', undo);
+document.getElementById('redo-btn').addEventListener('click', redo);
+
+/* ---------- service worker ---------- */
+if('serviceWorker' in navigator){ window.addEventListener('load', ()=> navigator.serviceWorker.register('/sw.js').catch(()=>{})); }
+
+/* ---------- boot ---------- */
+loadState(); render(); checkDueAlerts(false);
+</script>
+</body>
+</html>
