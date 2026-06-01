@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#283D3B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="soummo;">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<title>soummo; money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0A0A;
+    --forest:#283D3B;
+    --cream:#FAF5F0;
+    --terra:#C44536;
+    --teal:#197278;
+    --gold:#B98A2E;
+    --serif:'Instrument Serif', Georgia, serif;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --glass:rgba(255,255,255,0.62);
+    --glass-strong:rgba(255,255,255,0.80);
+    --glass-border:rgba(255,255,255,0.55);
+    --shadow:0 8px 30px rgba(40,61,59,0.12);
+    --shadow-lg:0 18px 50px rgba(40,61,59,0.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:var(--cream);
+    background-image:
+      radial-gradient(1200px 600px at 8% -5%, rgba(25,114,120,0.18), transparent 55%),
+      radial-gradient(1000px 700px at 105% 8%, rgba(196,69,54,0.13), transparent 50%),
+      radial-gradient(900px 900px at 50% 115%, rgba(40,61,59,0.20), transparent 55%);
+    background-attachment:fixed;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .app{max-width:520px;margin:0 auto;padding:0 16px;padding-top:env(safe-area-inset-top);padding-bottom:calc(96px + env(safe-area-inset-bottom));}
+
+  /* ---------- header ---------- */
+  header.top{
+    padding:20px 4px 12px;
+    display:flex;align-items:flex-end;justify-content:space-between;
+  }
+  .brand{font-family:var(--serif);font-style:italic;font-size:30px;line-height:1;color:var(--forest);letter-spacing:-0.5px;}
+  .brand .semi{color:var(--terra);}
+  .brand small{display:block;font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(40,61,59,0.55);margin-top:4px;font-weight:600;}
+  #cycle-label{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--terra);text-align:right;}
+  #cycle-label small{display:block;font-family:var(--sans);font-style:normal;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(40,61,59,0.5);font-weight:600;}
+
+  /* ---------- glass card ---------- */
+  .glass{
+    background:var(--glass);
+    backdrop-filter:blur(18px) saturate(150%);
+    -webkit-backdrop-filter:blur(18px) saturate(150%);
+    border:1px solid var(--glass-border);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+  }
+
+  /* ---------- summary hero ---------- */
+  .hero{padding:22px 20px 18px;margin-bottom:14px;}
+  .hero .label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:600;}
+  .hero .total{font-family:var(--serif);font-style:italic;font-size:46px;line-height:1.05;color:var(--ink);margin:2px 0 0;}
+  .hero .after{display:flex;align-items:baseline;gap:8px;margin-top:10px;padding-top:12px;border-top:1px dashed rgba(40,61,59,0.22);}
+  .hero .after .k{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:600;}
+  .hero .after .v{font-family:var(--serif);font-style:italic;font-size:26px;color:var(--teal);}
+  .hero .after .v.neg{color:var(--terra);}
+
+  .accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+  .acct{padding:12px 10px;text-align:center;cursor:pointer;transition:transform .15s ease;}
+  .acct:active{transform:scale(0.97);}
+  .acct .nm{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:700;}
+  .acct .amt{font-family:var(--serif);font-style:italic;font-size:21px;color:var(--ink);margin-top:3px;line-height:1;}
+  .acct .amt.zero{color:rgba(10,10,10,0.35);}
+
+  /* ---------- section heads ---------- */
+  .sec-head{display:flex;align-items:center;justify-content:space-between;margin:18px 4px 10px;}
+  .sec-head h2{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--forest);font-weight:400;}
+  .sec-head .count{font-size:11px;color:rgba(40,61,59,0.55);font-weight:600;letter-spacing:.5px;}
+  .pull-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:rgba(40,61,59,0.78);text-align:center;padding:10px 24px 4px;line-height:1.45;}
+
+  /* ---------- bills grid ---------- */
+  .bills{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .bill{
+    padding:13px 13px 12px;border-radius:18px;cursor:pointer;position:relative;overflow:hidden;
+    background:var(--glass-strong);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--glass-border);
+    box-shadow:0 4px 16px rgba(40,61,59,0.08);
+    transition:transform .14s ease, box-shadow .14s ease;
+  }
+  .bill:active{transform:scale(0.975);}
+  .bill .stripe{position:absolute;left:0;top:0;bottom:0;width:4px;background:rgba(40,61,59,0.18);}
+  .bill.paid .stripe{background:var(--teal);}
+  .bill.partial .stripe{background:var(--terra);}
+  .bill.advance .stripe{background:var(--gold);}
+  .bill .nm{font-size:13px;font-weight:600;color:var(--ink);line-height:1.2;padding-left:6px;}
+  .bill .amt{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ink);margin-top:6px;padding-left:6px;line-height:1;}
+  .bill .meta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-left:6px;gap:6px;}
+  .bill .win{font-size:10px;color:rgba(40,61,59,0.6);font-weight:600;letter-spacing:.3px;}
+  .bill .tag{font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:3px 7px;border-radius:999px;white-space:nowrap;}
+  .tag.paid{background:rgba(25,114,120,0.16);color:var(--teal);}
+  .tag.partial{background:rgba(196,69,54,0.16);color:var(--terra);}
+  .tag.advance{background:rgba(185,138,46,0.18);color:var(--gold);}
+  .tag.due{background:rgba(40,61,59,0.12);color:rgba(40,61,59,0.7);}
+  .tag.duesoon{background:var(--terra);color:#fff;}
+  .bill .acctchip{font-size:9px;color:rgba(40,61,59,0.5);font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding-left:6px;margin-top:5px;}
+
+  /* ---------- alerts ---------- */
+  .alert{
+    display:flex;gap:11px;align-items:flex-start;padding:13px 15px;margin-bottom:10px;border-radius:16px;
+    background:rgba(196,69,54,0.10);border:1px solid rgba(196,69,54,0.30);
+  }
+  .alert .dot{width:8px;height:8px;border-radius:50%;background:var(--terra);margin-top:5px;flex-shrink:0;animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
+  .alert .txt{font-size:12.5px;color:var(--ink);line-height:1.4;}
+  .alert .txt b{color:var(--terra);}
+
+  /* ---------- daily ---------- */
+  .filters{display:flex;gap:6px;margin-bottom:12px;}
+  .filters button{flex:1;padding:9px;border:none;border-radius:12px;background:var(--glass);font-family:var(--sans);font-size:12px;font-weight:600;color:rgba(40,61,59,0.7);cursor:pointer;border:1px solid var(--glass-border);}
+  .filters button.on{background:var(--forest);color:var(--cream);}
+  .daily-add{padding:16px;margin-bottom:14px;}
+  .daily-add .row{display:flex;gap:8px;margin-bottom:9px;}
+  .field{flex:1;}
+  .field label{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(40,61,59,0.6);font-weight:700;margin-bottom:4px;}
+  input,select,textarea{width:100%;font-family:var(--sans);font-size:15px;padding:11px 12px;border:1px solid rgba(40,61,59,0.18);border-radius:12px;background:rgba(255,255,255,0.7);color:var(--ink);outline:none;}
+  input:focus,select:focus,textarea:focus{border-color:var(--teal);}
+  .btn{display:block;width:100%;padding:13px;border:none;border-radius:14px;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.5px;cursor:pointer;text-align:center;}
+  .btn-primary{background:var(--forest);color:var(--cream);}
+  .btn-terra{background:var(--terra);color:#fff;}
+  .btn-teal{background:var(--teal);color:#fff;}
+  .btn-ghost{background:rgba(40,61,59,0.08);color:var(--forest);}
+  .btn:active{opacity:.85;}
+  .expense{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;margin-bottom:8px;}
+  .expense .l .nm{font-size:14px;font-weight:600;color:var(--ink);}
+  .expense .l .sub{font-size:11px;color:rgba(40,61,59,0.55);margin-top:2px;}
+  .expense .r{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--terra);}
+  .empty{text-align:center;padding:34px 16px;color:rgba(40,61,59,0.5);font-family:var(--serif);font-style:italic;font-size:17px;}
+
+  /* ---------- goals ---------- */
+  .goal{padding:18px;margin-bottom:12px;}
+  .goal .gh{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .goal .gh .nm{font-family:var(--serif);font-style:italic;font-size:21px;color:var(--forest);line-height:1.1;}
+  .goal .badge{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:var(--terra);color:#fff;white-space:nowrap;flex-shrink:0;}
+  .goal .nums{display:flex;align-items:baseline;gap:6px;margin-top:10px;}
+  .goal .nums .cur{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--ink);}
+  .goal .nums .tgt{font-size:12px;color:rgba(40,61,59,0.55);font-weight:600;}
+  .bar{height:9px;border-radius:999px;background:rgba(40,61,59,0.12);overflow:hidden;margin-top:10px;}
+  .bar > span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--forest));transition:width .5s ease;}
+  .goal .pct{font-size:11px;color:rgba(40,61,59,0.6);font-weight:700;margin-top:6px;}
+  .goal .gactions{display:flex;gap:8px;margin-top:13px;}
+  .goal .gactions button{flex:1;padding:10px;border:none;border-radius:11px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;}
+
+  /* ---------- history ---------- */
+  .hist{padding:16px 18px;margin-bottom:10px;}
+  .hist .hc{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--forest);}
+  .hist .hrow{display:flex;justify-content:space-between;margin-top:8px;font-size:12.5px;color:rgba(40,61,59,0.75);}
+  .hist .hrow b{font-family:var(--serif);font-style:italic;color:var(--ink);font-weight:400;font-size:14px;}
+
+  /* ---------- more ---------- */
+  .more-card{padding:6px;margin-bottom:12px;}
+  .more-row{display:flex;align-items:center;justify-content:space-between;padding:15px 14px;border-bottom:1px solid rgba(40,61,59,0.08);cursor:pointer;}
+  .more-row:last-child{border-bottom:none;}
+  .more-row .ml .t{font-size:14px;font-weight:600;color:var(--ink);}
+  .more-row .ml .d{font-size:11px;color:rgba(40,61,59,0.55);margin-top:2px;}
+  .more-row .chev{color:rgba(40,61,59,0.4);font-size:18px;}
+
+  /* ---------- bottom tabs ---------- */
+  nav.tabs{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;
+    display:flex;max-width:520px;margin:0 auto;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+    background:var(--glass-strong);
+    backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
+    border-top:1px solid var(--glass-border);
+  }
+  nav.tabs button{flex:1;background:none;border:none;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  nav.tabs .ic{width:22px;height:22px;stroke:rgba(40,61,59,0.55);stroke-width:1.8;fill:none;}
+  nav.tabs .lb{font-size:10px;font-weight:600;color:rgba(40,61,59,0.55);letter-spacing:.3px;}
+  nav.tabs button.on .ic{stroke:var(--terra);}
+  nav.tabs button.on .lb{color:var(--terra);}
+
+  /* ---------- modal ---------- */
+  .scrim{position:fixed;inset:0;z-index:100;background:rgba(10,10,10,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;}
+  .scrim.show{display:flex;}
+  .sheet{
+    width:100%;max-width:520px;background:var(--cream);border-radius:24px 24px 0 0;
+    padding:22px 20px calc(26px + env(safe-area-inset-bottom));
+    box-shadow:var(--shadow-lg);animation:rise .25s ease;
+  }
+  @keyframes rise{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .sheet h3{font-family:var(--serif);font-style:italic;font-size:26px;color:var(--forest);margin-bottom:2px;}
+  .sheet .sub{font-size:13px;color:rgba(40,61,59,0.6);margin-bottom:18px;}
+  .sheet .opt{display:flex;gap:9px;margin-bottom:18px;}
+  .footer{text-align:center;padding:24px 0 8px;font-size:10px;letter-spacing:2.5px;color:rgba(40,61,59,0.4);font-weight:600;}
+  .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:200;background:var(--forest);color:var(--cream);padding:12px 20px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+  .hidden{display:none!important;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">soummo<span class="semi">;</span><small>money</small></div>
+    <div id="cycle-label">jun 2026<small>cycle</small></div>
+  </header>
+
+  <main id="screen"></main>
+
+  <div class="footer">SOUMMO · MONEY · V.12 · MMXXVI</div>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button data-screen="home" class="on">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>
+    <span class="lb">Home</span>
+  </button>
+  <button data-screen="daily">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>
+    <span class="lb">Daily</span>
+  </button>
+  <button data-screen="goals">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>
+    <span class="lb">Goals</span>
+  </button>
+  <button data-screen="history">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 4v4h4M12 7v5l3 2"/></svg>
+    <span class="lb">History</span>
+  </button>
+  <button data-screen="more">
+    <svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+    <span class="lb">More</span>
+  </button>
+</nav>
+
+<div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+const STORE_KEY = 'soummo_money_v12';
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* ---------- default state (June 2026, verified numbers) ---------- */
+function defaultState(){
+  return {
+    version:'V.12',
+    salaryAmount:234000,
+    salaryDay:28,
+    currentCycle:'Jun 2026',
+    accounts:{ brac:245000, ific:0, wallet:500 },
+    items:[
+      // id, name, amount, account, status, paid, win[from,to], advance(bool), advanceNote
+      {id:'rent',      name:'House Rent', amount:24200, account:'brac',   status:'due',     paid:0,     win:[1,5]},
+      {id:'garage',    name:'Garage',     amount:2200,  account:'brac',   status:'due',     paid:0,     win:[1,5]},
+      {id:'electric',  name:'Electricity',amount:4000,  account:'brac',   status:'paid',    paid:4000,  win:[1,10]},
+      {id:'gas',       name:'Gas',        amount:2290,  account:'brac',   status:'paid',    paid:2290,  win:[1,10]},
+      {id:'help',      name:'Help',       amount:7000,  account:'brac',   status:'paid',    paid:7000,  win:[1,7]},
+      {id:'grocery',   name:'Grocery',    amount:15000, account:'wallet', status:'paid',    paid:15000, win:[1,30]},
+      {id:'education', name:'Education',  amount:15000, account:'brac',   status:'paid',    paid:15000, win:[1,10], advance:true, advanceNote:'10k advance toward July', advanceAmount:10000},
+      {id:'wifi',      name:'WiFi',       amount:1000,  account:'brac',   status:'paid',    paid:1000,  win:[1,10], advance:true, advanceNote:'Paid till July', advanceCycles:1},
+      {id:'uncle',     name:'Uncle',      amount:22000, account:'brac',   status:'paid',    paid:22000, win:[1,10]},
+      {id:'itracker',  name:'ITracker',   amount:350,   account:'brac',   status:'paid',    paid:350,   win:[1,10]},
+      {id:'babies',    name:'Babies',     amount:2200,  account:'wallet', status:'partial', paid:1100,  win:[1,30]},
+      {id:'misc',      name:'Misc',       amount:8000,  account:'wallet', status:'partial', paid:6200,  win:[1,30]},
+      {id:'fuel',      name:'Fuel',       amount:8000,  account:'brac',   status:'partial', paid:6000,  win:[1,30]},
+      {id:'dps',       name:'DPS Personal',amount:10000,account:'brac',   status:'due',     paid:0,     win:[15,20]},
+      {id:'dps-fridge',name:'DPS Fridge', amount:10000, account:'brac',   status:'due',     paid:0,     win:[15,20]},
+      {id:'brac-emi',  name:'BRAC EMI',   amount:29000, account:'brac',   status:'due',     paid:0,     win:[25,25]}
+    ],
+    goals:[
+      {id:'ebl',     name:'EBL Loan Closure', target:255000,  current:0, priority:true},
+      {id:'bracloan',name:'BRAC Loan Payoff', target:1276000, current:0, note:'monthly EMI handles'},
+      {id:'emergency',name:'Emergency Fund',  target:500000,  current:0},
+      {id:'fridge',  name:'Fridge DPS',       target:125000,  current:0},
+      {id:'puja',    name:'Durga Puja Fund',  target:100000,  current:0}
+    ],
+    dailyExpenses:[],
+    history:[],
+    activeScreen:'home',
+    dailyFilter:'cycle',
+    notifiedToday:[]
+  };
+}
+
+/* ---------- state persistence ---------- */
+let state;
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){ state = JSON.parse(raw); migrate(); }
+    else { state = defaultState(); saveState(); }
+  }catch(e){ state = defaultState(); }
+}
+function migrate(){
+  const d = defaultState();
+  for(const k in d){ if(!(k in state)) state[k] = d[k]; }
+  if(!state.accounts) state.accounts = d.accounts;
+  if(!Array.isArray(state.notifiedToday)) state.notifiedToday = [];
+}
+function saveState(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e){ toast('Storage error'); }
+}
+
+/* ---------- helpers / math ---------- */
+function fmt(n){ return '৳' + Math.round(n).toLocaleString('en-IN'); }
+function totalCash(){ const a=state.accounts; return a.brac + a.ific + a.wallet; }
+function itemRemaining(i){
+  if(i.status==='paid' || i.status==='advance') return 0;
+  if(i.status==='partial') return Math.max(0, i.amount - i.paid);
+  return i.amount; // due
+}
+function totalDue(){ return state.items.reduce((s,i)=> s + itemRemaining(i), 0); }
+function cashAfter(){ return totalCash() - totalDue(); }
+function totalPaidThisCycle(){
+  const bills = state.items.reduce((s,i)=> s + (i.paid||0), 0);
+  const daily = state.dailyExpenses.reduce((s,e)=> s + e.amount, 0);
+  return bills + daily;
+}
+function displayStatus(i){ return i.advance ? 'advance' : i.status; }
+function acctLabel(k){ return {brac:'BRAC', ific:'IFIC', wallet:'Wallet'}[k] || k; }
+function todayDay(){ return new Date().getDate(); }
+function windowOpen(i){
+  if(!i.win) return false;
+  const d = todayDay();
+  return d >= i.win[0] && d <= i.win[1];
+}
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 1900);
+}
+
+/* =========================================================
+   RENDER
+========================================================= */
+function render(){
+  document.getElementById('cycle-label').innerHTML =
+    state.currentCycle.toLowerCase() + '<small>cycle</small>';
+  document.querySelectorAll('#tabs button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.screen === state.activeScreen);
+  });
+  const el = document.getElementById('screen');
+  const screens = {home:renderHome, daily:renderDaily, goals:renderGoals, history:renderHistory, more:renderMore};
+  el.innerHTML = (screens[state.activeScreen] || renderHome)();
+  wireScreen();
+  saveState();
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const after = cashAfter();
+  const a = state.accounts;
+  const alerts = dueAlertsHtml();
+  return `
+    <section class="glass hero">
+      <div class="label">Total Cash on Hand</div>
+      <div class="total">${fmt(totalCash())}</div>
+      <div class="after">
+        <span class="k">After dues</span>
+        <span class="v ${after<0?'neg':''}">${fmt(after)}</span>
+      </div>
+    </section>
+
+    <div class="accounts">
+      <div class="glass acct" data-acct="brac">
+        <div class="nm">BRAC</div><div class="amt ${a.brac===0?'zero':''}">${fmt(a.brac)}</div>
+      </div>
+      <div class="glass acct" data-acct="ific">
+        <div class="nm">IFIC</div><div class="amt ${a.ific===0?'zero':''}">${fmt(a.ific)}</div>
+      </div>
+      <div class="glass acct" data-acct="wallet">
+        <div class="nm">Wallet</div><div class="amt ${a.wallet===0?'zero':''}">${fmt(a.wallet)}</div>
+      </div>
+    </div>
+
+    ${alerts}
+
+    <div class="pull-quote">"Every taka has a job; or it drifts."</div>
+
+    <div class="sec-head">
+      <h2>Bills</h2>
+      <span class="count">${state.items.filter(i=>itemRemaining(i)>0).length} still due · ${fmt(totalDue())}</span>
+    </div>
+    <div class="bills">
+      ${state.items.map(billCard).join('')}
+    </div>
+  `;
+}
+
+function billCard(i){
+  const st = displayStatus(i);
+  const due = itemRemaining(i);
+  let tag, tagcls=st;
+  if(st==='paid'){ tag='Paid'; }
+  else if(st==='partial'){ tag=fmt(i.paid)+' / '+fmt(i.amount); }
+  else if(st==='advance'){ tag='Advance'; }
+  else { // due
+    if(windowOpen(i)){ tag='Due now'; tagcls='duesoon'; }
+    else { tag='Due'; tagcls='due'; }
+  }
+  return `
+    <div class="bill ${st}" data-bill="${i.id}">
+      <div class="stripe"></div>
+      <div class="nm">${i.name}</div>
+      <div class="amt">${fmt(i.amount)}</div>
+      <div class="meta">
+        <span class="win">${i.win? i.win[0]+(i.win[0]===i.win[1]?'':'–'+i.win[1]) : '—'}</span>
+        <span class="tag ${tagcls}">${tag}</span>
+      </div>
+      <div class="acctchip">${acctLabel(i.account)}${i.advance && i.advanceNote ? ' · '+i.advanceNote : ''}</div>
+    </div>
+  `;
+}
+
+function dueAlertsHtml(){
+  const open = state.items.filter(i=> itemRemaining(i)>0 && windowOpen(i));
+  if(!open.length) return '';
+  return open.map(i=>`
+    <div class="alert">
+      <div class="dot"></div>
+      <div class="txt"><b>${i.name}</b> window is open (${i.win[0]}–${i.win[1]}) — ${fmt(itemRemaining(i))} due from ${acctLabel(i.account)}. Tap the bill to confirm payment.</div>
+    </div>
+  `).join('');
+}
+
+/* ---------- DAILY ---------- */
+function renderDaily(){
+  const f = state.dailyFilter;
+  const list = filteredDaily();
+  const total = list.reduce((s,e)=>s+e.amount,0);
+  return `
+    <section class="glass daily-add">
+      <div class="row">
+        <div class="field"><label>Amount</label><input id="d-amt" type="number" inputmode="numeric" placeholder="0"></div>
+        <div class="field"><label>Account</label>
+          <select id="d-acct">
+            <option value="brac">BRAC</option>
+            <option value="ific">IFIC</option>
+            <option value="wallet">Wallet</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:11px;"><label>Note</label><input id="d-note" type="text" placeholder="What was it for?"></div>
+      <button class="btn btn-terra" id="d-add">Log expense</button>
+    </section>
+
+    <div class="filters">
+      <button data-f="week"  class="${f==='week'?'on':''}">Week</button>
+      <button data-f="month" class="${f==='month'?'on':''}">Month</button>
+      <button data-f="cycle" class="${f==='cycle'?'on':''}">Cycle</button>
+    </div>
+
+    <div class="sec-head">
+      <h2>Spent</h2>
+      <span class="count">${fmt(total)} · ${list.length} item${list.length!==1?'s':''}</span>
+    </div>
+
+    ${ list.length ? list.map(e=>`
+      <div class="glass expense" data-exp="${e.id}">
+        <div class="l">
+          <div class="nm">${e.note || 'Expense'}</div>
+          <div class="sub">${acctLabel(e.account)} · ${new Date(e.at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
+        </div>
+        <div class="r">−${fmt(e.amount)}</div>
+      </div>
+    `).join('') : `<div class="empty">No expenses logged here yet.</div>` }
+  `;
+}
+
+function filteredDaily(){
+  const now = Date.now();
+  const day = 86400000;
+  return state.dailyExpenses.filter(e=>{
+    if(state.dailyFilter==='week')  return now - new Date(e.at).getTime() <= 7*day;
+    if(state.dailyFilter==='month') return now - new Date(e.at).getTime() <= 30*day;
+    return e.cycle === state.currentCycle; // cycle
+  }).sort((a,b)=> new Date(b.at) - new Date(a.at));
+}
+
+/* ---------- GOALS ---------- */
+function renderGoals(){
+  return `
+    <div class="sec-head"><h2>Goals</h2><span class="count">${state.goals.length} tracked</span></div>
+    ${state.goals.map(g=>{
+      const pct = g.target>0 ? Math.min(100, Math.round(g.current/g.target*100)) : 0;
+      return `
+      <section class="glass goal" data-goal="${g.id}">
+        <div class="gh">
+          <div class="nm">${g.name}</div>
+          ${g.priority ? '<span class="badge">Priority</span>' : ''}
+        </div>
+        <div class="nums">
+          <span class="cur">${fmt(g.current)}</span>
+          <span class="tgt">of ${fmt(g.target)}${g.note? ' · '+g.note : ''}</span>
+        </div>
+        <div class="bar"><span style="width:${pct}%"></span></div>
+        <div class="pct">${pct}% funded · ${fmt(Math.max(0,g.target-g.current))} to go</div>
+        <div class="gactions">
+          <button class="btn-teal goal-add" data-goal="${g.id}" style="color:#fff;">Add funds</button>
+          <button class="btn-ghost goal-sub" data-goal="${g.id}">Withdraw</button>
+        </div>
+      </section>`;
+    }).join('')}
+  `;
+}
+
+/* ---------- HISTORY ---------- */
+function renderHistory(){
+  if(!state.history.length){
+    return `<div class="sec-head"><h2>History</h2></div><div class="empty">No archived cycles yet.<br>Roll over a cycle to start your ledger.</div>`;
+  }
+  return `
+    <div class="sec-head"><h2>History</h2><span class="count">${state.history.length} cycle${state.history.length!==1?'s':''}</span></div>
+    ${state.history.slice().reverse().map(h=>`
+      <section class="glass hist">
+        <div class="hc">${h.cycle}</div>
+        <div class="hrow"><span>Cash at start</span><b>${fmt(h.cashStart)}</b></div>
+        <div class="hrow"><span>Salary added</span><b>${fmt(h.salaryAdded)}</b></div>
+        <div class="hrow"><span>Total spent</span><b>${fmt(h.totalSpent)}</b></div>
+        <div class="hrow"><span>Items settled</span><b>${h.itemsPaid}</b></div>
+      </section>
+    `).join('')}
+  `;
+}
+
+/* ---------- MORE ---------- */
+function renderMore(){
+  return `
+    <div class="sec-head"><h2>More</h2></div>
+    <section class="glass more-card">
+      <div class="more-row" data-act="backup"><div class="ml"><div class="t">Backup data</div><div class="d">Download a JSON snapshot</div></div><span class="chev">›</span></div>
+      <div class="more-row" data-act="restore"><div class="ml"><div class="t">Restore data</div><div class="d">Load from a JSON file</div></div><span class="chev">›</span></div>
+      <div class="more-row" data-act="csv"><div class="ml"><div class="t">Export CSV</div><div class="d">Bills + daily as spreadsheet</div></div><span class="chev">›</span></div>
+    </section>
+    <section class="glass more-card">
+      <div class="more-row" data-act="archive"><div class="ml"><div class="t">Archive cycle</div><div class="d">Save current cycle to history (no reset)</div></div><span class="chev">›</span></div>
+      <div class="more-row" data-act="rollover"><div class="ml"><div class="t">Roll over to next cycle</div><div class="d">Add salary, reset bills, advance month</div></div><span class="chev">›</span></div>
+    </section>
+    <section class="glass more-card">
+      <div class="more-row" data-act="notify"><div class="ml"><div class="t">Enable notifications</div><div class="d">Alert when a bill window opens</div></div><span class="chev">›</span></div>
+      <div class="more-row" data-act="reset"><div class="ml"><div class="t" style="color:var(--terra)">Reset everything</div><div class="d">Wipe all data, start fresh</div></div><span class="chev">›</span></div>
+    </section>
+  `;
+}
+
+/* =========================================================
+   WIRING
+========================================================= */
+function wireScreen(){
+  // accounts -> edit
+  document.querySelectorAll('.acct').forEach(el=>{
+    el.addEventListener('click', ()=> openAccountSheet(el.dataset.acct));
+  });
+  // bills -> pay sheet
+  document.querySelectorAll('.bill').forEach(el=>{
+    el.addEventListener('click', ()=> openPaySheet(el.dataset.bill));
+  });
+  // daily
+  const add = document.getElementById('d-add');
+  if(add) add.addEventListener('click', addDaily);
+  document.querySelectorAll('.filters button').forEach(b=>{
+    b.addEventListener('click', ()=>{ state.dailyFilter = b.dataset.f; render(); });
+  });
+  document.querySelectorAll('.expense').forEach(el=>{
+    el.addEventListener('click', ()=> confirmDeleteDaily(el.dataset.exp));
+  });
+  // goals
+  document.querySelectorAll('.goal-add').forEach(b=> b.addEventListener('click', ()=> openGoalSheet(b.dataset.goal,'add')));
+  document.querySelectorAll('.goal-sub').forEach(b=> b.addEventListener('click', ()=> openGoalSheet(b.dataset.goal,'sub')));
+  // more
+  document.querySelectorAll('.more-row').forEach(r=>{
+    r.addEventListener('click', ()=> moreAction(r.dataset.act));
+  });
+}
+
+/* ---------- pay sheet (atomic math) ---------- */
+function openPaySheet(id){
+  const i = state.items.find(x=>x.id===id);
+  if(!i) return;
+  const remaining = itemRemaining(i);
+  const isSettled = (i.status==='paid' || i.status==='advance');
+  openSheet(`
+    <h3>${i.name}</h3>
+    <div class="sub">${fmt(i.amount)} · ${acctLabel(i.account)} · window ${i.win? i.win[0]+'–'+i.win[1] : '—'}${i.advanceNote? ' · '+i.advanceNote : ''}</div>
+    ${ remaining>0 ? `
+      <button class="btn btn-teal" id="pay-full">Pay full (${fmt(remaining)})</button>
+      <div style="height:9px"></div>
+      <div class="row" style="display:flex;gap:9px;align-items:flex-end;">
+        <div class="field"><label>Partial amount</label><input id="pay-amt" type="number" inputmode="numeric" placeholder="0"></div>
+        <button class="btn btn-terra" id="pay-part" style="width:auto;padding:13px 18px;">Pay</button>
+      </div>
+    ` : `
+      <div class="sub" style="margin-bottom:14px;">Settled this cycle.${i.advance? ' Marked as advance-paid.' : ''}</div>
+    `}
+    ${ (i.paid>0) ? `<div style="height:12px"></div><button class="btn btn-ghost" id="pay-refund">Reverse payment (refund ${fmt(i.paid)} to ${acctLabel(i.account)})</button>` : '' }
+  `);
+  const full = document.getElementById('pay-full');
+  if(full) full.addEventListener('click', ()=> applyPayment(id, remaining));
+  const part = document.getElementById('pay-part');
+  if(part) part.addEventListener('click', ()=>{
+    const v = parseFloat(document.getElementById('pay-amt').value);
+    if(!v || v<=0) return toast('Enter an amount');
+    applyPayment(id, Math.min(v, remaining));
+  });
+  const refund = document.getElementById('pay-refund');
+  if(refund) refund.addEventListener('click', ()=> refundPayment(id));
+}
+
+function applyPayment(id, amt){
+  const i = state.items.find(x=>x.id===id);
+  if(!i || amt<=0) return;
+  if(state.accounts[i.account] < amt){
+    if(!confirm(`${acctLabel(i.account)} only has ${fmt(state.accounts[i.account])}. Pay anyway (will go negative)?`)) return;
+  }
+  state.accounts[i.account] -= amt;   // account side
+  i.paid += amt;                       // item side
+  if(i.paid >= i.amount) i.status = 'paid';
+  else i.status = 'partial';
+  closeSheet();
+  render();
+  toast(`Paid ${fmt(amt)} · ${i.name}`);
+}
+
+function refundPayment(id){
+  const i = state.items.find(x=>x.id===id);
+  if(!i || i.paid<=0) return;
+  if(!confirm(`Reverse ${fmt(i.paid)} on ${i.name}? It returns to ${acctLabel(i.account)} and the bill goes back to due.`)) return;
+  state.accounts[i.account] += i.paid;  // reverse account
+  i.paid = 0;
+  i.status = 'due';
+  i.advance = false;                    // clearing advance flag on reversal
+  closeSheet();
+  render();
+  toast(`Reversed · ${i.name}`);
+}
+
+/* ---------- account edit ---------- */
+function openAccountSheet(key){
+  openSheet(`
+    <h3>${acctLabel(key)}</h3>
+    <div class="sub">Set the current balance. Use this only to correct/sync — daily activity updates it automatically.</div>
+    <div class="field" style="margin-bottom:16px;"><label>Balance</label><input id="acc-val" type="number" inputmode="numeric" value="${state.accounts[key]}"></div>
+    <button class="btn btn-primary" id="acc-save">Save balance</button>
+  `);
+  document.getElementById('acc-save').addEventListener('click', ()=>{
+    const v = parseFloat(document.getElementById('acc-val').value);
+    if(isNaN(v)) return toast('Enter a number');
+    state.accounts[key] = v;
+    closeSheet(); render(); toast(`${acctLabel(key)} updated`);
+  });
+}
+
+/* ---------- daily ---------- */
+function addDaily(){
+  const amt = parseFloat(document.getElementById('d-amt').value);
+  const acct = document.getElementById('d-acct').value;
+  const note = document.getElementById('d-note').value.trim();
+  if(!amt || amt<=0) return toast('Enter an amount');
+  if(state.accounts[acct] < amt){
+    if(!confirm(`${acctLabel(acct)} only has ${fmt(state.accounts[acct])}. Log anyway?`)) return;
+  }
+  state.accounts[acct] -= amt;
+  state.dailyExpenses.push({
+    id:'e-'+Date.now(), amount:amt, account:acct, note:note,
+    at:new Date().toISOString(), cycle:state.currentCycle
+  });
+  render();
+  toast(`Logged ${fmt(amt)}`);
+}
+function confirmDeleteDaily(id){
+  const e = state.dailyExpenses.find(x=>x.id===id);
+  if(!e) return;
+  if(!confirm(`Delete "${e.note||'Expense'}" (${fmt(e.amount)})? ${fmt(e.amount)} returns to ${acctLabel(e.account)}.`)) return;
+  state.accounts[e.account] += e.amount;       // reverse
+  state.dailyExpenses = state.dailyExpenses.filter(x=>x.id!==id);
+  render();
+  toast('Expense removed');
+}
+
+/* ---------- goals ---------- */
+function openGoalSheet(id, mode){
+  const g = state.goals.find(x=>x.id===id);
+  if(!g) return;
+  const adding = mode==='add';
+  openSheet(`
+    <h3>${g.name}</h3>
+    <div class="sub">${adding?'Move money into this goal':'Pull money back out'} · now at ${fmt(g.current)}</div>
+    <div class="field"><label>Amount</label><input id="g-amt" type="number" inputmode="numeric" placeholder="0"></div>
+    <div style="height:11px"></div>
+    <div class="field" style="margin-bottom:16px;"><label>${adding?'From account':'Back to account'}</label>
+      <select id="g-acct"><option value="brac">BRAC</option><option value="ific">IFIC</option><option value="wallet">Wallet</option></select>
+    </div>
+    <button class="btn ${adding?'btn-teal':'btn-ghost'}" id="g-go" ${adding?'style="color:#fff"':''}>${adding?'Add to goal':'Withdraw'}</button>
+  `);
+  document.getElementById('g-go').addEventListener('click', ()=>{
+    const v = parseFloat(document.getElementById('g-amt').value);
+    const acct = document.getElementById('g-acct').value;
+    if(!v || v<=0) return toast('Enter an amount');
+    if(adding){
+      if(state.accounts[acct] < v){ if(!confirm(`${acctLabel(acct)} only has ${fmt(state.accounts[acct])}. Continue?`)) return; }
+      state.accounts[acct] -= v; g.current += v;
+      toast(`Added ${fmt(v)} to ${g.name}`);
+    } else {
+      const take = Math.min(v, g.current);
+      g.current -= take; state.accounts[acct] += take;
+      toast(`Withdrew ${fmt(take)}`);
+    }
+    closeSheet(); render();
+  });
+}
+
+/* ---------- sheet helpers ---------- */
+function openSheet(html){
+  document.getElementById('sheet').innerHTML = html;
+  document.getElementById('scrim').classList.add('show');
+}
+function closeSheet(){ document.getElementById('scrim').classList.remove('show'); }
+document.getElementById('scrim').addEventListener('click', e=>{ if(e.target.id==='scrim') closeSheet(); });
+
+/* ---------- MORE actions ---------- */
+function moreAction(act){
+  if(act==='backup') doBackup();
+  else if(act==='restore') doRestore();
+  else if(act==='csv') doCSV();
+  else if(act==='archive') doArchive();
+  else if(act==='rollover') doRollover();
+  else if(act==='notify') enableNotifications();
+  else if(act==='reset') doReset();
+}
+
+function doBackup(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  downloadBlob(blob, `soummo-money-${state.currentCycle.replace(' ','-')}.json`);
+  toast('Backup downloaded');
+}
+function doRestore(){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='application/json,.json';
+  inp.onchange = ()=>{
+    const file = inp.files[0]; if(!file) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        const data = JSON.parse(r.result);
+        if(!data.accounts || !data.items) throw new Error('bad file');
+        state = data; migrate(); saveState(); render();
+        toast('Data restored');
+      }catch(e){ toast('Invalid backup file'); }
+    };
+    r.readAsText(file);
+  };
+  inp.click();
+}
+function doCSV(){
+  let rows = [['Type','Name','Amount','Paid','Account','Status','Cycle']];
+  state.items.forEach(i=> rows.push(['Bill', i.name, i.amount, i.paid, acctLabel(i.account), displayStatus(i), state.currentCycle]));
+  state.dailyExpenses.forEach(e=> rows.push(['Daily', e.note||'Expense', e.amount, e.amount, acctLabel(e.account), 'spent', e.cycle]));
+  const csv = rows.map(r=> r.map(c=> `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  downloadBlob(new Blob([csv],{type:'text/csv'}), `soummo-money-${state.currentCycle.replace(' ','-')}.csv`);
+  toast('CSV exported');
+}
+function downloadBlob(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  setTimeout(()=> URL.revokeObjectURL(url), 1000);
+}
+
+function snapshotHistory(salaryAdded){
+  const spent = totalPaidThisCycle();
+  const itemsPaid = state.items.filter(i=> i.status==='paid' || i.status==='partial' || i.advance).length;
+  state.history.push({
+    id:'h-'+Date.now(),
+    cycle:state.currentCycle,
+    cashStart: totalCash() + spent - salaryAdded,
+    salaryAdded: salaryAdded,
+    totalSpent: spent,
+    itemsPaid: itemsPaid,
+    archivedAt: new Date().toISOString()
+  });
+}
+
+function doArchive(){
+  if(!confirm(`Archive ${state.currentCycle} to history?\nThis saves a snapshot but does NOT reset anything.`)) return;
+  snapshotHistory(0);
+  saveState(); render();
+  toast('Cycle archived');
+}
+
+function doRollover(){
+  if(!confirm(`Roll over to next cycle?\n\nThis will:\n• Save ${state.currentCycle} to history\n• Add salary ${fmt(state.salaryAmount)} to BRAC\n• Reset bills to due (advance-paid stays covered)\n• Advance the month`)) return;
+
+  snapshotHistory(state.salaryAmount);
+
+  // salary lands in BRAC (cash flow comes only from BRAC)
+  state.accounts.brac += state.salaryAmount;
+
+  // reset bills
+  state.items.forEach(i=>{
+    if(i.amount<=0) return;
+    if(i.advanceCycles && i.advanceCycles > 0){
+      // still covered ahead — stays paid, decrement coverage
+      i.advanceCycles -= 1;
+      i.status = 'paid';
+      i.paid = i.amount;
+      i.advance = i.advanceCycles > 0;
+      if(!i.advance){ i.advanceNote = ''; }
+    } else if(i.advanceAmount && i.advanceAmount > 0){
+      // partial advance carries into the new cycle as a head start
+      i.paid = Math.min(i.advanceAmount, i.amount);
+      i.status = i.paid >= i.amount ? 'paid' : 'partial';
+      i.advance = false; i.advanceNote = ''; i.advanceAmount = 0;
+    } else {
+      i.status = 'due'; i.paid = 0; i.advance = false; i.advanceNote = '';
+    }
+  });
+
+  // clear daily for new cycle
+  state.dailyExpenses = [];
+  state.notifiedToday = [];
+
+  // advance month
+  const parts = state.currentCycle.split(' ');
+  let mi = MONTHS.indexOf(parts[0]);
+  let yr = parseInt(parts[1]);
+  mi = (mi + 1) % 12;
+  if(mi === 0) yr++;
+  state.currentCycle = MONTHS[mi] + ' ' + yr;
+
+  saveState(); render();
+  toast(`Rolled into ${state.currentCycle}`);
+}
+
+function doReset(){
+  if(!confirm('Reset EVERYTHING to the June 2026 defaults? This cannot be undone.')) return;
+  if(!confirm('Are you absolutely sure? All accounts, bills, goals and history will be wiped.')) return;
+  state = defaultState(); saveState(); render();
+  toast('Reset to defaults');
+}
+
+/* ---------- notifications ---------- */
+function enableNotifications(){
+  if(!('Notification' in window)) return toast('Not supported on this device');
+  Notification.requestPermission().then(p=>{
+    if(p==='granted'){ checkDueAlerts(true); toast('Notifications on'); }
+    else toast('Permission denied');
+  });
+}
+function checkDueAlerts(force){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const open = state.items.filter(i=> itemRemaining(i)>0 && windowOpen(i));
+  open.forEach(i=>{
+    const key = state.currentCycle+'|'+i.id+'|'+todayDay();
+    if(force || !state.notifiedToday.includes(key)){
+      try{ new Notification('soummo; money', { body:`${i.name} is due — ${fmt(itemRemaining(i))} from ${acctLabel(i.account)}.` }); }catch(e){}
+      if(!state.notifiedToday.includes(key)) state.notifiedToday.push(key);
+    }
+  });
+  saveState();
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('#tabs button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    state.activeScreen = b.dataset.screen;
+    closeSheet();
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* ---------- service worker ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+}
+
+/* ---------- boot ---------- */
+loadState();
+render();
+checkDueAlerts(false);
+</script>
+</body>
+</html>
