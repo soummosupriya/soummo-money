@@ -377,7 +377,7 @@ function render(){
   const partner=ui.viewMode==='partner';
   document.body.classList.toggle('partner',partner);
   document.getElementById('brand-sub').textContent=partner?'household':'money';
-  document.getElementById('cycle-label').innerHTML=(vm.meta.current_cycle||'').toLowerCase()+'<small>'+(partner?'shared':'cycle')+'</small>';
+  var _now=new Date();document.getElementById('cycle-label').innerHTML=(vm.meta.current_cycle||'').toLowerCase()+'<small>today &middot; '+_now.getDate()+' '+MONTHS[_now.getMonth()]+'</small>';
   document.getElementById('tabs').style.display=(me.role==='partner')?'none':'flex';
   document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.screen===ui.activeScreen));
   const el=document.getElementById('screen');
